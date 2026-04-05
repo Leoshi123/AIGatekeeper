@@ -15,6 +15,25 @@ Un middleware de seguridad y optimización para desarrolladores que utilizan age
 
 ---
 
+## 💡 Inspiración y Filosofía
+
+Este proyecto no nace de la nada, ni se conforma con las respuestas pre-entrenadas de modelos de 2019. Se construye bajo los pilares de quienes nos enseñaron que el código es un arte vivo:
+
+> **"A programar se aprende programando."** — *MoureDev*
+>
+> **"La inteligencia artificial no tiene límites."** — *Gentleman Programming*
+
+**ZTC-Wrapper** es mi respuesta a ese desafío. Es el puente entre el código que se aprende ensuciándose las manos y la potencia de una IA que no se detiene, pero que necesita un guardián para no comprometer nuestra seguridad ni nuestro presupuesto.
+
+### ¿Por qué este proyecto hoy?
+
+Si los modelos de IA fueron entrenados con datos del pasado (2019-2022), **ZTC-Wrapper** vive en el presente.
+
+* **MoureDev** nos enseñó la importancia de las buenas prácticas y el aprendizaje continuo. Este wrapper evita que la IA te sugiera código "zombie" u obsoleto.
+* **Gentleman Programming** nos mostró cómo orquestar la complejidad. Este sistema aplica arquitectura limpia para que el contexto sea quirúrgico y eficiente.
+
+---
+
 ## 🚀 Instalación
 
 ```bash
