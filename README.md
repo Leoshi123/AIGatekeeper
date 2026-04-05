@@ -1,58 +1,62 @@
-# 🛡️ Zero-Trust AI Context Wrapper (ZTC-Wrapper)
+# 🛡️ Zero-Trust AI Agent Wrapper (Agente de Confianza Cero)
 
 **"No confíes en la IA, verifica el contexto, limpia el rastro."**
 
-[Español](./README.md) | [English](./README_EN.md)
+Un middleware de seguridad y optimización para desarrolladores que utilizan agentes de IA (Claude Code, OpenCode, GPT, etc.) y desean evitar el envío de datos sensibles, reducir el gasto de tokens y eliminar código vulnerable.
 
 ---
 
-## ¿Qué es ZTC-Wrapper?
+## 🛡️ Características
 
-ZTC-Wrapper es un **middleware de seguridad y optimización** para desarrolladores que utilizan agentes de IA (como Claude Code, OpenCode, GPT, etc.) y desean:
-
-- 🛡️ **Privacidad:** Evitar que secretos, API Keys o rutas locales viajen a la nube
-- 💰 **Economía:** Reducir hasta 70% el consumo de tokens usando poda AST
-- 🔒 **Seguridad:** Detectar y bloquear patrones de código obsoletos y vulnerables
+- 🧹 **Limpiador de Metadatos**: Elimina comentarios, rutas absolutas y firmas de modelos de IA del código generado
+- 🚫 **Detector de Secretos**: Bloquea API keys, tokens y credenciales antes de que se escriban en disco
+- ⚠️ **Filtro de Código Peligroso**: Prohíbe funciones vulnerables como `eval()`, `shell=True`, `innerHTML`, etc.
+- 🪝 **Git Hooks Integrados**: Se ejecuta automáticamente en cada commit
 
 ---
 
-## ⚡ Instalación
+## 🚀 Instalación
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/Leoshi123/zero-trust-ai-agent.git
+git clone https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-.git
 cd zero-trust-ai-agent
-
-# Instalar dependencias
 pip install -r requirements.txt
-
-# Uso básico
-python -m src.cli --help
+python install_hooks.py
 ```
 
 ---
 
-## 📦 Módulos
+## 📋 Uso
 
-### 1. Sanitizador de Metadatos (Ghost-Cleaner) 🔧
-Limpia el código generado por la IA:
-- Rutas absolutas → relativas
-- Comentarios de pensamiento interno
-- IDs de sesión y tokens
+```bash
+# Windows (usar run.bat para evitar problemas de encoding)
+run.bat --help
 
-### 2. Extractor AST (Context-Pruner)
-Reduce el contexto enviado a la IA usando análisis sintáctico.
+# Escanear un archivo
+run.bat sanitize scan archivo.py
 
-### 3. Detector Zombi (Legacy-Shield)
-Identifica funciones obsoletas y propone alternativas seguras.
+# Ver configuración
+run.bat shield scan archivo.py
+
+# Modo interactivo
+run.bat demo
+```
 
 ---
 
-## 🛡️ Filosofía de Seguridad
+## 🛡️ Funciones Prohibidas por Defecto
 
-> **"Zero Trust"**: No confíes en nadie, verifica todo.
+| Lenguaje | Funciones Bloqueadas |
+|----------|---------------------|
+| Python | `eval()`, `exec()`, `os.system()`, `subprocess` con `shell=True` |
+| JavaScript | `eval()`, `document.write()`, `innerHTML` |
+| Bash | `rm -rf` sin confirmación |
 
-Este proyecto opera bajo el principio de **Privacidad por Diseño**. Ningún dato sale de tu máquina sin pasar por los filtros de seguridad.
+---
+
+## 🎯 ¿Por qué este proyecto?
+
+Los agentes de IA entrenados con código de 2019-2022 heredaron **deuda técnica de seguridad**. Este proyecto implementa el principio de **"Zero Trust"**: no confiar en ningún output de IA sin validar.
 
 ---
 
