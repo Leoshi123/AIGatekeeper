@@ -1,0 +1,52 @@
+# Zero-Trust AI Agent Wrapper
+# Copyright (c) 2026 Leoshi
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Entornos Virtuales ---
+.env
+.venv
+env/
+venv/
+ENV/
+.venvs/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Logs y Temporal ---
+*.log
+temp/
+tmp/
+*.tmp
+
+# --- testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/

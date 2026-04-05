@@ -1,0 +1,18 @@
+# Dependencias Python
+# Core
+regex>=2023.0.0
+
+# AST Parsing
+tree-sitter>=0.20.0
+tree-sitter-python>=0.20.0
+
+# Security
+bandit>=1.7.0
+safety>=3.0.0
+
+# CLI
+click>=8.1.0
+rich>=13.0.0
+
+# File watching
+watchdog>=3.0.0
