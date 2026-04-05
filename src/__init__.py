@@ -6,6 +6,7 @@ Middleware de seguridad para agentes de IA:
 - Extractor AST (poda de contexto)
 - Detector de código zombi
 - Git hooks
+- AI Agent Wrapper
 """
 
 __version__ = "0.1.0"
@@ -15,6 +16,7 @@ __license__ = "MIT"
 from .sanitizer import MetadataSanitizer, sanitize_code
 from .ast_parser import ASTExtractor, prune_file
 from .detector import LegacyShield, scan_directory, Severity
+from .wrapper import AIAgentWrapper, WrapperConfig, WrapperResult, run_safe
 
 __all__ = [
     # Sanitizer
@@ -27,4 +29,9 @@ __all__ = [
     "LegacyShield",
     "scan_directory",
     "Severity",
+    # Wrapper
+    "AIAgentWrapper",
+    "WrapperConfig",
+    "WrapperResult",
+    "run_safe",
 ]

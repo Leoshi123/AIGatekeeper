@@ -12,6 +12,7 @@ Un middleware de seguridad y optimización para desarrolladores que utilizan age
 - 🚫 **Detector de Secretos**: Bloquea API keys, tokens y credenciales antes de que se escriban en disco
 - ⚠️ **Filtro de Código Peligroso**: Prohíbe funciones vulnerables como `eval()`, `shell=True`, `innerHTML`, etc.
 - 🪝 **Git Hooks Integrados**: Se ejecuta automáticamente en cada commit
+- 🤖 **AI Agent Wrapper**: Envuelve llamadas a Claude Code/OpenCode con sanitización automática
 
 ---
 
@@ -56,6 +57,12 @@ run.bat sanitize scan archivo.py
 
 # Ver configuración
 run.bat shield scan archivo.py
+
+# Ejecutar agente IA con sanitización
+run.bat run execute "Tu prompt aquí" --agent claude
+
+# Verificar agentes disponibles
+run.bat run check
 
 # Modo interactivo
 run.bat demo

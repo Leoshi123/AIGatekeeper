@@ -16,6 +16,7 @@ from pathlib import Path
 from src.sanitizer import MetadataSanitizer
 from src.ast_parser import ASTExtractor
 from src.detector import LegacyShield, Severity
+from src.wrapper import AIAgentWrapper, WrapperConfig
 
 
 @click.group()
@@ -363,6 +364,106 @@ def uninstall():
         click.echo("✅ Pre-commit hook desinstalado")
     else:
         click.echo("⚠️  No hay hook instalado")
+
+
+# ============================================================
+# COMANDOS DEL WRAPPER (AI Agent)
+# ============================================================
+
+
+@cli.group()
+def run():
+    """Comandos del wrapper de agentes IA"""
+    pass
+
+
+@run.command()
+@click.argument("prompt")
+@click.option(
+    "--agent", "-a", default="claude", help="Agente a usar (claude, opencode)"
+)
+@click.option(
+    "--sanitize-input/--no-sanitize-input", default=True, help="Sanitizar input"
+)
+@click.option(
+    "--sanitize-output/--no-sanitize-output", default=True, help="Sanitizar output"
+)
+@click.option("--prune/--no-prune", default=False, help="Podar contexto AST")
+@click.option(
+    "--block/--no-block", default=True, help="Bloquear si hay problemas críticos"
+)
+@click.option(
+    "--context",
+    "-c",
+    type=click.Path(exists=True),
+    help="Archivo de contexto para podar",
+)
+def execute(
+    prompt: str,
+    agent: str,
+    sanitize_input: bool,
+    sanitize_output: bool,
+    prune: bool,
+    block: bool,
+    context: str,
+):
+    """Ejecuta un agente IA con sanitización."""
+
+    wrapper = AIAgentWrapper()
+
+    # Verificar si el agente está disponible
+    if agent != "demo":
+        available = wrapper.check_agent_available(agent)
+        if not available:
+            click.echo(f"⚠️  {agent} no está disponible. Usando modo demo.")
+            agent = "demo"
+
+    config = WrapperConfig(
+        agent_command=agent,
+        sanitize_input=sanitize_input,
+        sanitize_output=sanitize_output,
+        prune_context=prune,
+        block_critical=block,
+        context_file=context,
+    )
+
+    click.echo(f"🚀 Ejecutando {agent} con ZTC-Wrapper...\n")
+
+    result = wrapper.run(prompt, config)
+
+    # Mostrar resultados
+    click.echo(f"📥 Input sanitizado: {'✅' if result.sanitized_input else '❌'}")
+    click.echo(f"📤 Output sanitizado: {'✅' if result.sanitized_output else '❌'}")
+    click.echo(f"✂️  Contexto podado: {'✅' if result.pruned_context else '❌'}")
+    click.echo(f"🔒 Problemas de seguridad: {result.security_issues_found}")
+
+    if result.blocked:
+        click.echo(f"\n🛑 OUTPUT BLOQUEADO por seguridad")
+        click.echo(result.stdout)
+    else:
+        click.echo(f"\n✅ Output:")
+        click.echo(result.stdout)
+
+    if result.stderr:
+        click.echo(f"\n⚠️  Stderr:\n{result.stderr}")
+
+    click.echo(f"\n📊 Return code: {result.returncode}")
+
+
+@run.command()
+def check():
+    """Verifica qué agentes están disponibles."""
+
+    wrapper = AIAgentWrapper()
+
+    click.echo("=== 🛡️ Agentes Disponibles ===\n")
+
+    agents = ["claude", "opencode"]
+
+    for agent in agents:
+        available = wrapper.check_agent_available(agent)
+        status = "✅ Disponible" if available else "❌ No disponible"
+        click.echo(f"  {agent}: {status}")
 
 
 # ============================================================
