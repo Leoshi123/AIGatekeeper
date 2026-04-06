@@ -177,17 +177,21 @@ class ASTExtractor:
         task_lower = task_normalized.lower()
 
         # Palabras clave que indican nombres de funciones
+        # Nota: \w no incluye acentos, por eso usamos patrón más flexible
         keywords = [
-            r"funcion(?:es)?\s+(\w+)",
-            r"function\s+(\w+)",
-            r"metodo\s+(\w+)",
-            r"method\s+(\w+)",
+            r"funcion(?:es)?\s+([a-zA-Z0-9_áéíóúñ]+)",
+            r"function\s+([a-zA-Z0-9_]+)",
+            r"metodo\s+([a-zA-Z0-9_áéíóúñ]+)",
+            r"method\s+([a-zA-Z0-9_]+)",
             r"(\w+)\s+function",
-            r"optimizar\s+(\w+)",
-            r"refactor(?:izar)?\s+(\w+)",
-            r"fix\s+(\w+)",
-            r"update\s+(\w+)",
-            r"change\s+(\w+)",
+            r"optimizar\s+([a-zA-Z0-9_áéíóúñ]+)",
+            r"refactor(?:izar)?\s+([a-zA-Z0-9_áéíóúñ]+)",
+            r"fix\s+([a-zA-Z0-9_]+)",
+            r"update\s+([a-zA-Z0-9_]+)",
+            r"change\s+([a-zA-Z0-9_]+)",
+            # Patrón para capturar función al final: "optimizar función login" -> "login"
+            r"optimizar\s+funcion\s+([a-zA-Z0-9_áéíóúñ]+)",
+            r"fix\s+funcion\s+([a-zA-Z0-9_áéíóúñ]+)",
         ]
 
         found = []
@@ -203,9 +207,6 @@ class ASTExtractor:
             camel_case = re.findall(r"[a-z]+[A-Z][a-z]+", task_lower)
             found.extend(snake_case)
             found.extend(camel_case)
-
-        # Default: main, app, index (funciones comunes)
-        return found if found else ["main", "app", "index"]
 
         # Default: main, app, index (funciones comunes)
         return found if found else ["main", "app", "index"]

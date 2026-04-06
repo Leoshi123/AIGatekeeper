@@ -1,9 +1,11 @@
 # Dependencias Python
+# ====================
 # Core
 regex>=2023.0.0
 pyyaml>=6.0
 
-# AST Parsing
+# AST Parsing - tree-sitter (avanzado)
+# Para habilitar: pip install tree-sitter-language
 tree-sitter>=0.20.0
 tree-sitter-python>=0.20.0
 
@@ -17,3 +19,16 @@ rich>=13.0.0
 
 # File watching
 watchdog>=3.0.0
+
+# Testing
+pytest>=8.0.0
+pytest-cov>=4.1.0
+
+# Code Quality
+flake8>=7.0.0
+black>=24.0.0
+mypy>=1.8.0
+
+# Type stubs (optional)
+types-regex>=2023.0.0
+types-pyyaml>=6.0

@@ -12,3 +12,7 @@ node_modules/
 
 # Patterns con wildcards
 *_test.py
+
+# Falsos positivos conocidos
+# Regex .exec() en contexto de parseo (no ejecución de código)
+**/generator_template.js

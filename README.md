@@ -1,5 +1,10 @@
 # 🛡️ Zero-Trust AI Agent Wrapper (Agente de Confianza Cero)
 
+[![Tests](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/actions/workflows/ci.yml/badge.svg)](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/branch/main/graph/badge.svg)](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+
 **"No confíes en la IA, verifica el contexto, limpia el rastro."**
 
 Un middleware de seguridad y optimización para desarrolladores que utilizan agentes de IA (Claude Code, OpenCode, GPT, etc.) y desean evitar el envío de datos sensibles, reducir el gasto de tokens y eliminar código vulnerable.
