@@ -61,12 +61,34 @@ Un middleware de seguridad y optimización para desarrolladores que utilizan age
 - Python 3.11+
 - Windows / macOS / Linux
 
-### Pasos
+### Instalación automática
+
+**Windows (PowerShell):**
+```powershell
+.\install.ps1
+```
+
+**Linux / macOS (Bash):**
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+### Instalación manual
 
 ```bash
 # Clonar el repositorio
 git clone https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-.git
 cd zero-trust-ai-agent
+
+# Crear entorno virtual
+python -m venv venv
+
+# Activar
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
@@ -167,14 +189,7 @@ Crea un archivo `.ztcrc` en la raíz de tu proyecto:
 | Versión | Feature |
 |---------|---------|
 | v1.0.0 | Initial release |
-| v1.0.1 | Multi-language (Go, Rust, Java, C/C++) |
-| v1.0.2 | Tests para nuevos lenguajes |
-| v1.0.3 | Web Dashboard |
-| v1.1.0 | **JS, PHP, React 19, TypeScript** (actual) |
-| v1.2.0 | Scripts de instalación multi-plataforma |
-| v1.3.0 | i18n completo |
-| v1.4.0 | Dashboard 3D |
-| v1.5.0 | MCP Server nativo |
+| v1.0.1 | **Multi-language (Go, Rust, Java, C/C++) + Multi-OS scripts** |
 
 ---
 
