@@ -4,6 +4,9 @@
 [![Coverage](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/branch/main/graph/badge.svg)](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-)
+
+> 🌐 Available in: English, Español
 
 **"No confíes en la IA, verifica el contexto, limpia el rastro."**
 
@@ -15,246 +18,186 @@ Un middleware de seguridad y optimización para desarrolladores que utilizan age
 
 - 🧹 **Limpiador de Metadatos**: Elimina comentarios, rutas absolutas y firmas de modelos de IA del código generado
 - 🚫 **Detector de Secretos**: Bloquea API keys, tokens y credenciales antes de que se escriban en disco
-- ⚠️ **Filtro de Código Peligroso**: Prohíbe funciones vulnerables como `eval()`, `shell=True`, `innerHTML`, etc.
+- ⚠️ **Filtro de Código Peligroso**: Detecta +60 funciones vulnerables en múltiples lenguajes
 - 🪝 **Git Hooks Integrados**: Se ejecuta automáticamente en cada commit
 - 🤖 **AI Agent Wrapper**: Envuelve llamadas a Claude Code/OpenCode con sanitización automática
+- 🌐 **Multi-plataforma**: Windows, macOS, Linux (todas las distribuciones)
+- 🌎 **Multi-idioma (i18n)**: Español + English (más idiomas en desarrollo)
 
 ---
 
-## 💡 Inspiración y Filosofía
+## 🌐 Lenguajes Soportados
 
-Este proyecto no nace de la nada, ni se conforma con las respuestas pre-entrenadas de modelos de 2019. Se construye bajo los pilares de quienes nos enseñaron que el código es un arte vivo:
+| Lenguaje | Patrones | Estado |
+|----------|---------|--------|
+| 🐍 **Python** | 24 | ✅ |
+| 💻 **JavaScript/Node.js** | 20+ | ✅ |
+| 📘 **TypeScript** | 15+ | ✅ |
+| 🔥 **Go** | 6 | ✅ |
+| 🦀 **Rust** | 5 | ✅ |
+| ☕ **Java** | 4 | ✅ |
+| 🔧 **C/C++** | 4 | ✅ |
+| 🐘 **PHP** | 15+ | ✅ |
+| ⚛️ **React 19** | 10+ | ✅ |
 
-> **"A programar se aprende programando."** — *MoureDev*
->
-> **"La inteligencia artificial no tiene límites."** — *Gentleman Programming*
+### Tipos de vulnerabilidades detectadas
 
-**ZTC-Wrapper** es mi respuesta a ese desafío. Es el puente entre el código que se aprende ensuciándose las manos y la potencia de una IA que no se detiene, pero que necesita un guardián para no comprometer nuestra seguridad ni nuestro presupuesto.
-
-### ¿Por qué este proyecto hoy?
-
-Si los modelos de IA fueron entrenados con datos del pasado (2019-2022), **ZTC-Wrapper** vive en el presente.
-
-* **MoureDev** nos enseñó la importancia de las buenas prácticas y el aprendizaje continuo. Este wrapper evita que la IA te sugiera código "zombie" u obsoleto.
-* **Gentleman Programming** nos mostró cómo orquestar la complejidad. Este sistema aplica arquitectura limpia para que el contexto sea quirúrgico y eficiente.
+- **Code Execution**: `eval()`, `exec()`, `system()`, `shell_exec()`
+- **SQL Injection**: Concatenación en queries sin prepared statements
+- **XSS**: `innerHTML`, `dangerouslySetInnerHTML`, `document.write()`
+- **Command Injection**: `subprocess`, `child_process`, `exec()` con concatenación
+- **Deserialization**: `unserialize()`, `pickle.loads()`, `ObjectInputStream`
+- **Path Traversal**: `file_get_contents` con input de usuario
+- **Hardcoded Secrets**: API keys, passwords, tokens
+- **Deprecated Libraries**: `mysql_query`, `eval`, `gets()`
+- **Type Safety**: `@ts-ignore`, `any`, unsafe casts
 
 ---
 
 ## 🚀 Instalación
 
+### Requisitos
+
+- Python 3.11+
+- Windows / macOS / Linux
+
+### Pasos
+
 ```bash
+# Clonar el repositorio
 git clone https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-.git
 cd zero-trust-ai-agent
+
+# Instalar dependencias
 pip install -r requirements.txt
 
-# Instalar Git Hooks (ejecutar desde la raíz del proyecto)
+# Instalar Git Hooks (opcional)
 python -m src.cli hooks install
 
 # Verificar instalación
 python -m src.cli --help
 ```
 
-### Windows
-
-Si ves errores de encoding, asegurate de usar PowerShell o CMD con soporte UTF-8:
-
-```cmd
-chcp 65001
-set PYTHONIOENCODING=utf-8
-```
-
-O simplemente usá el CLI directamente que ya tiene el fix de encoding integrado:
+### Uso del CLI
 
 ```bash
-python -m src.cli --help
+# Sanitizar código (limpiar metadata)
+python -m src.cli sanitize input.py
+
+# Escanear vulnerabilidades
+python -m src.cli scan input.py --language python
+
+# Podar contexto para la IA
+python -m src.cli prune input.py --task "fix function login"
 ```
 
 ---
 
-## 📋 Uso
+## 🌐 Web Dashboard
+
+Ejecuta el dashboard web para una interfaz visual:
 
 ```bash
-# Ver ayuda
-python -m src.cli --help
-
-# Escanear un archivo
-python -m src.cli sanitize scan archivo.py
-
-# Verificar configuración
-python -m src.cli shield scan archivo.py
-
-# Ejecutar agente IA con sanitización
-python -m src.cli run execute "Tu prompt aquí" --agent claude
-
-# Verificar agentes disponibles
-python -m src.cli run check
-
-# Modo interactivo
-python -m src.cli demo
+python server.py
 ```
+
+Luego abre: **http://localhost:4901**
+
+### Features del Dashboard
+
+- 📊 Stats en tiempo real
+- 🔍 Scanner de código interactivo
+- 🧹 Sanitizador de metadata
+- 📜 Historial de actividad
+- 🌙 UI dark estilo Engram
 
 ---
 
-## 🧪 Ejemplos de Entrada/Salida
+## 🌍 i18n (Internacionalización)
 
-### Ejemplo 1: Sanitizador de Metadatos
+El proyecto soporta múltiples idiomas:
 
-**Input** (código generado por IA):
+| Código | Idioma | Estado |
+|--------|--------|--------|
+| `es` | Español | ✅ Default |
+| `en` | English | ✅ |
+
+### Cambiar idioma
+
 ```python
-# Generated by Claude Code v2.1.3
-# Thinking: This function validates user input
+# En tu código
+from src.config import ZTCConfig
 
-def authenticate(path: str):
-    # Reading from C:/Users/Leoshi/secrets/api_key.txt
-    key = open('/home/user/.env').read()
-    
-    session_id = "abc-123-def-456"
-    model_id = "gpt-4-turbo"
-    return process(key)
-```
-
-**Output** (después de sanitización):
-```python
-def authenticate(path: str):
-    key = open('./.env').read()
-    
-    session_id = "[REDACTED]"
-    model_id = "[MODEL]"
-    return process(key)
-```
-
-**Elementos removidos**:
-- `// Generated by Claude Code` (ai_comment)
-- `// Thinking: This function validates user input` (ai_comment)
-- `C:/Users/Leoshi/secrets/api_key.txt` → `./secrets/api_key.txt` (absolute_path)
-- `/home/user/.env` → `./.env` (absolute_path)
-- `abc-123-def-456` → `[REDACTED]` (session_token)
-- `gpt-4-turbo` → `[MODEL]` (model_signature)
-
----
-
-### Ejemplo 2: Detector de Código Zombi
-
-**Input** (código con vulnerabilidades):
-```python
-import os
-import pickle
-import yaml
-
-def unsafe_load():
-    config = yaml.load(user_input)  # Peligroso!
-    return config
-
-def execute_code():
-    result = eval(user_input)  # CRÍTICO!
-    return result
-
-api_key = "sk-1234567890abcdef"  # expuesta!
-```
-
-**Output** (reporte de hallazgos):
-```
-🔍 Escaneo de: <inline>
-📊 Total problemas: 5
-   🛑 Críticos: 2
-   ⚠️  Altos:    2
-   📝 Medios:   1
-
-📍 Línea 5: CRITICAL
-   config = yaml.load(user_input)
-   ⚠️  yaml.load() sin Loader es vulnerable a deserialización
-   ✅ Alternativa: yaml.safe_load() o yaml.load(Loader=yaml.CSafeLoader)
-   🔗 CVE-2020-14340
-
-📍 Línea 9: CRITICAL
-   result = eval(user_input)
-   ⚠️  eval() permite ejecución de código arbitrario
-   ✅ Alternativa: ast.literal_eval() para datos seguros, o json.loads()
-   🔗 CVE-2021-23336
-
-📍 Línea 12: CRITICAL
-   api_key = "sk-1234567890abcdef"
-   ⚠️  API key hardcodeada
-   ✅ Alternativa: Usar environment variables o secret manager
+config = ZTCConfig.load()
+config.language = "en"  # English
+config.save()
 ```
 
 ---
 
-### Ejemplo 3: Poda de Contexto AST
+## 🔧 Configuración
 
-**Input** (500 líneas, función relevante: `process_data`):
-```python
-import os
-import json
-from typing import List, Dict, Optional
-from datetime import datetime
+Crea un archivo `.ztcrc` en la raíz de tu proyecto:
 
-def main():
-    config = load_config()
-    return process_data(config)
-
-def load_config() -> Dict:
-    with open('config.json') as f:
-        return json.load(f)
-
-def process_data(data: Dict) -> List:
-    results = []
-    for item in data.get('items', []):
-        results.append(transform(item))
-    return results
-
-def transform(item: Dict) -> Dict:
-    return {'processed': True, **item}
-
-def helper_utility(x: int) -> int:
-    return x * 2
-
-def old_legacy_function():
-    # Código legacy no usado
-    ...
-
-# ... 450 líneas más de código no relacionado
-```
-
-**Output** (contexto podado para tarea "optimizar función process_data"):
-```
-📊 Original: 500 líneas
-📊 Podado: 85 líneas
-📉 Reducción: 83%
-
-📦 Imports:
-  import json
-  from typing import List, Dict
-
-🔧 Funciones Relevantes:
-  • process_data
-    Dependencias: [transform]
-  • transform
-    Dependencias: []
-
-📝 Firmas Omitidas:
-  def load_config() -> Dict: ...
-  def helper_utility(x: int) -> int: ...
+```json
+{
+  "language": "es",
+  "languages_to_scan": ["python", "javascript", "php"],
+  "block_critical": true,
+  "max_context_lines": 500,
+  "exclude_patterns": ["tests/*", "node_modules/*"]
+}
 ```
 
 ---
 
-## 🛡️ Funciones Prohibidas por Defecto
+## 🤝 Contribuir
 
-| Lenguaje | Funciones Bloqueadas |
-|----------|---------------------|
-| Python | `eval()`, `exec()`, `os.system()`, `subprocess` con `shell=True` |
-| JavaScript | `eval()`, `document.write()`, `innerHTML` |
-| Bash | `rm -rf` sin confirmación |
+1. Fork el repositorio
+2. Crear branch: `git checkout -b feature/nueva-caracteristica`
+3. Implementar mejora
+4. Agregar tests
+5. Commit y push
+6. Crear Pull Request
 
 ---
 
-## 🎯 ¿Por qué este proyecto?
+## 📋 Roadmap
 
-Los agentes de IA entrenados con código de 2019-2022 heredaron **deuda técnica de seguridad**. Este proyecto implementa el principio de **"Zero Trust"**: no confiar en ningún output de IA sin validar.
+| Versión | Feature |
+|---------|---------|
+| v1.0.0 | Initial release |
+| v1.0.1 | Multi-language (Go, Rust, Java, C/C++) |
+| v1.0.2 | Tests para nuevos lenguajes |
+| v1.0.3 | Web Dashboard |
+| v1.1.0 | **JS, PHP, React 19, TypeScript** (actual) |
+| v1.2.0 | Scripts de instalación multi-plataforma |
+| v1.3.0 | i18n completo |
+| v1.4.0 | Dashboard 3D |
+| v1.5.0 | MCP Server nativo |
+
+---
+
+## 💡 Inspiración
+
+> **"A programar se aprende programando."** — *MoureDev*
+>
+> **"La inteligencia artificial no tiene límites."** — *Gentleman Programming*
 
 ---
 
 ## 📄 Licencia
 
-MIT License - Copyright (c) 2026 Leoshi
+MIT License - ver [LICENSE](LICENSE) para más detalles.
+
+---
+
+## 🙏 Agradecimientos
+
+- [MoureDev](https://moure.dev) - Por la inspiración de aprendizaje continuo
+- [Gentleman Programming](https://gentlemanprogramming.com) - Por la filosofía de calidad
+- [Comunidad](https://discord.com/invite/gentleman-programming-769863833996754944) - Por el apoyo
+
+---
+
+**🛡️ Hecho con ❤️ para la comunidad**
