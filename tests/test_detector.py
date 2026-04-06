@@ -28,6 +28,124 @@ class TestLegacyShield:
         assert len(results) > 0
         assert any("eval" in r.line_content for r in results)
 
+    # ========== GO TESTS ==========
+
+    def test_detect_go_exec_command(self):
+        """Debe detectar exec.Command en Go."""
+        code = 'exec.Command("ls", "-la")'
+        detector = LegacyShield(languages=["go"])
+        results = detector.scan_code(code)
+
+        assert any("exec" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_go_sql_injection(self):
+        """Debe detectar SQL injection en Go."""
+        code = 'database.Sql("SELECT * FROM users WHERE id=" + userId)'
+        detector = LegacyShield(languages=["go"])
+        results = detector.scan_code(code)
+
+        assert any("sql" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_go_sprintf(self):
+        """Debe detectar Sprintf con %s en Go."""
+        code = 'fmt.Sprintf("SELECT * FROM %s", tableName)'
+        detector = LegacyShield(languages=["go"])
+        results = detector.scan_code(code)
+
+        assert any("sprintf" in r.pattern.pattern.lower() for r in results)
+
+    # ========== RUST TESTS ==========
+
+    def test_detect_rust_unsafe(self):
+        """Debe detectar bloque unsafe en Rust."""
+        code = "unsafe { *ptr }"
+        detector = LegacyShield(languages=["rust"])
+        results = detector.scan_code(code)
+
+        assert any("unsafe" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_rust_unwrap(self):
+        """Debe detectar unwrap() en Rust."""
+        code = "let x = Some(value).unwrap();"
+        detector = LegacyShield(languages=["rust"])
+        results = detector.scan_code(code)
+
+        assert any("unwrap" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_rust_command(self):
+        """Debe detectar Command::new en Rust."""
+        code = 'std::process::Command::new("ls")'
+        detector = LegacyShield(languages=["rust"])
+        results = detector.scan_code(code)
+
+        assert any("command" in r.pattern.pattern.lower() for r in results)
+
+    # ========== JAVA TESTS ==========
+
+    def test_detect_java_runtime_exec(self):
+        """Debe detectar Runtime.exec() en Java."""
+        code = 'Runtime.getRuntime().exec("ls")'
+        detector = LegacyShield(languages=["java"])
+        results = detector.scan_code(code)
+
+        assert any("runtime" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_java_sql_injection(self):
+        """Debe detectar SQL injection en Java."""
+        code = 'stmt.executeQuery("SELECT * FROM users WHERE id=" + id)'
+        detector = LegacyShield(languages=["java"])
+        results = detector.scan_code(code)
+
+        # El patrón es executeQuery con concatenación
+        assert len(results) >= 1
+
+    def test_detect_java_deserialization(self):
+        """Debe detectar ObjectInputStream en Java."""
+        code = "ObjectInputStream ois = new ObjectInputStream(fis);"
+        detector = LegacyShield(languages=["java"])
+        results = detector.scan_code(code)
+
+        assert any(
+            "objectinputstream" in r.pattern.pattern.lower()
+            or "deserializ" in r.pattern.description.lower()
+            for r in results
+        )
+
+    # ========== C/C++ TESTS ==========
+
+    def test_detect_c_system(self):
+        """Debe detectar system() en C."""
+        code = 'system("ls -la");'
+        detector = LegacyShield(languages=["c"])
+        results = detector.scan_code(code)
+
+        assert any("system" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_c_strcpy(self):
+        """Debe detectar strcpy() en C."""
+        code = "strcpy(dest, src);"
+        detector = LegacyShield(languages=["c"])
+        results = detector.scan_code(code)
+
+        assert any("strcpy" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_c_gets(self):
+        """Debe detectar gets() en C."""
+        code = "gets(buffer);"
+        detector = LegacyShield(languages=["c"])
+        results = detector.scan_code(code)
+
+        assert any("gets" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_c_printf_format(self):
+        """Debe detectar printf con format string vulnerability."""
+        code = 'printf("%s", user_input);'
+        detector = LegacyShield(languages=["c"])
+        results = detector.scan_code(code)
+
+        # El patrón es printf con %s (format string vulnerability)
+        assert len(results) >= 1
+
     def test_detect_shell_true(self):
         """Debe detectar subprocess con shell=True."""
         code = "subprocess.call(cmd, shell=True)"
