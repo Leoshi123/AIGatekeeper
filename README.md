@@ -245,6 +245,7 @@ Crea un archivo `.ztcrc` en la raíz de tu proyecto:
 |---------|---------|
 | v1.0.0 | Initial release |
 | v1.0.1 | **Multi-language (Go, Rust, Java, C/C++) + Multi-OS scripts + MCP Server** |
+| v1.0.2 | **MCP Server stabilization & test automation** |
 
 ---
 

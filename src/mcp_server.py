@@ -314,7 +314,7 @@ def clean_code(code: str) -> str:
 @mcp.resource("ztc://version")
 def get_version() -> str:
     """Returns the ZTC-Wrapper version."""
-    return "ZTC-Wrapper v1.0.1 — Zero-Trust AI Agent Security"
+    return "ZTC-Wrapper v1.0.2 — Zero-Trust AI Agent Security"
 
 
 @mcp.resource("ztc://languages")
