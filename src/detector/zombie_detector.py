@@ -16,6 +16,7 @@ from enum import Enum
 
 # Importar configuración
 from src.config import ZTCConfig, get_project_root
+from src.detector.normalizer import CodeNormalizer
 
 
 class Severity(Enum):
@@ -539,6 +540,7 @@ class LegacyShield:
         self.ignore_patterns = self._load_ztcignore()
 
         self._compile_patterns()
+        self.normalizer = CodeNormalizer()
 
     def _load_ztcignore(self) -> List[str]:
         """Carga patrones del archivo .ztcignore."""
@@ -651,7 +653,23 @@ class LegacyShield:
         """
         results = []
 
-        for line_num, line in enumerate(code.split("\n"), 1):
+        # Normalización recursiva para detectar obfuscación
+        normalized_code = self.normalizer.normalize(code)
+
+        # Escaneamos tanto la versión original como la normalizada
+        # Usamos un set para evitar duplicados si el patrón coincide en ambos
+        combined_lines = []
+        for i, line in enumerate(code.split("\n")):
+            combined_lines.append((i + 1, line, False)) # original
+
+        norm_lines = normalized_code.split("\n")
+        for i, line in enumerate(norm_lines):
+            if i < len(combined_lines):
+                # Si la línea normalizada es diferente, la analizamos
+                if line.strip() != combined_lines[i][1].strip():
+                    combined_lines.append((i + 1, line, True)) # normalized
+
+        for line_num, line, is_normalized in combined_lines:
             original_line = line
             line = line.strip()
 
@@ -661,11 +679,15 @@ class LegacyShield:
 
             for pattern, zp in self.compiled_patterns:
                 if pattern.search(line):
+                    # Evitar duplicados si la misma línea original y normalizada disparan el mismo patrón
+                    if any(r.line_number == line_num and r.pattern == zp for r in results):
+                        continue
+
                     results.append(
                         DetectionResult(
                             file_path=file_path,
                             line_number=line_num,
-                            line_content=line,
+                            line_content=f"[NORMALIZED] {line}" if is_normalized else line,
                             pattern=zp,
                             suggestion=self._generate_suggestion(zp, line),
                         )

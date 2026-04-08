@@ -12,6 +12,7 @@ import os
 from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 from pathlib import Path
+from src.detector.zombie_detector import LegacyShield, Severity
 
 # Intentar importar tree-sitter
 try:
@@ -90,6 +91,9 @@ class ASTExtractor:
 
         if self.use_tree_sitter:
             self._init_parser()
+
+        # Inicializar el escudo para validación de seguridad durante la poda
+        self.shield = LegacyShield()
 
     def _init_parser(self):
         """Inicializa el parser de tree-sitter."""
@@ -306,6 +310,14 @@ class ASTExtractor:
                 or target.lower() in func_name.lower()
                 for target in functions_to_include
             )
+
+            # --- SECURITY GUARD: Preservar si contiene código CRÍTICO ---
+            if not is_relevant:
+                # Escanear el cuerpo de la función en busca de vulnerabilidades CRITICAL
+                security_results = self.shield.scan_code(body)
+                if any(r.pattern.severity == Severity.CRITICAL for r in security_results):
+                    is_relevant = True # Forzar preservación por seguridad
+            # ------------------------------------------------------------
 
             if is_relevant:
                 # Extraer imports necesarios (básico)
