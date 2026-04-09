@@ -159,7 +159,10 @@ Agregá al config de tu cliente MCP:
   "mcpServers": {
     "ztc-wrapper": {
       "command": "python",
-      "args": ["-m", "src.mcp_server"]
+      "args": ["C:/Users/leosh/OneDrive/Documents/zero-trust-ai-agent/src/mcp_server.py", "stdio"],
+      "env": {
+        "PYTHONPATH": "C:/Users/leosh/OneDrive/Documents/zero-trust-ai-agent"
+      }
     }
   }
 }
@@ -245,7 +248,7 @@ Crea un archivo `.ztcrc` en la raíz de tu proyecto:
 |---------|---------|
 | v1.0.0 | Initial release |
 | v1.0.1 | **Multi-language (Go, Rust, Java, C/C++) + Multi-OS scripts + MCP Server** |
-| v1.0.2 | **MCP Server stabilization & test automation** |
+| v1.0.2 | **MCP Server stabilization & test automation (Indestructible Server)** |
 
 ---
 
