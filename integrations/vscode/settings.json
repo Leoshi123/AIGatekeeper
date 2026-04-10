@@ -1,8 +1,8 @@
 {
-  // ZTC-Wrapper Settings for VSCode
+  // AG-Wrapper Settings for VSCode
   // Place in: .vscode/settings.json
-  
-  "ztcWrapper": {
+
+  "agWrapper": {
     "enabled": true,
     "pythonPath": "${workspaceFolder}/venv/Scripts/python.exe",
     "projectRoot": "${workspaceFolder}",
@@ -19,7 +19,7 @@
   
   // File associations
   "files.associations": {
-    "*.ztcrc": "json"
+    "*.agrc": "json"
   },
   
   // Custom keybindings can be added via keybindings.json

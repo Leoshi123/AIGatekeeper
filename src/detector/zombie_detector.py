@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Detector Zombi (Legacy-Shield)
+🛡️ AG-Wrapper - Detector Zombi (Legacy-Shield)
 
 Linter de seguridad que detecta funciones obsoletas y vulnerables
 usadas por agentes de IA con código antiguo.
@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 # Importar configuración
-from src.config import ZTCConfig, get_project_root
+from src.config import AGConfig, get_project_root
 from src.detector.normalizer import CodeNormalizer
 
 
@@ -613,23 +613,23 @@ class LegacyShield:
         self.project_path = project_path
 
         # Cargar configuración
-        self.config = ZTCConfig.load(project_path)
+        self.config = AGConfig.load(project_path)
         self.exclude_patterns = self.config.detector.exclude_patterns
 
-        # Cargar .ztcignore (compatibilidad hacia atrás)
-        self.ignore_patterns = self._load_ztcignore()
+        # Cargar .agignore (compatibilidad hacia atrás)
+        self.ignore_patterns = self._load_agignore()
 
         self._compile_patterns()
         self.normalizer = CodeNormalizer()
 
-    def _load_ztcignore(self) -> List[str]:
-        """Carga patrones del archivo .ztcignore."""
-        ztcignore_path = os.path.join(self.project_path, ".ztcignore")
+    def _load_agignore(self) -> List[str]:
+        """Carga patrones del archivo .agignore."""
+        agignore_path = os.path.join(self.project_path, ".agignore")
         patterns = []
 
-        if os.path.exists(ztcignore_path):
+        if os.path.exists(agignore_path):
             try:
-                with open(ztcignore_path, "r", encoding="utf-8") as f:
+                with open(agignore_path, "r", encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line and not line.startswith("#"):
@@ -642,15 +642,15 @@ class LegacyShield:
     def is_ignored(self, file_path: str, line_content: str) -> bool:
         """Determina si un archivo o línea debe ser ignorada."""
         # Check magic comment in line
-        if "# ztc: ignore" in line_content or "// ztc: ignore" in line_content:
+        if "# ag: ignore" in line_content or "// ag: ignore" in line_content:
             return True
 
-        # Check file patterns from .ztcignore
+        # Check file patterns from .agignore
         for pattern in self.ignore_patterns:
             if fnmatch.fnmatch(file_path, pattern):
                 return True
 
-        # Check exclude_patterns from .ztcrc (se aplica al contenido de la línea)
+        # Check exclude_patterns from .agrc (se aplica al contenido de la línea)
         for pattern in self.exclude_patterns:
             try:
                 if re.search(pattern, line_content, re.IGNORECASE):

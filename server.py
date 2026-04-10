@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🛡️ ZTC-Wrapper Web Dashboard
+🛡️ AG-Wrapper Web Dashboard
 
-Interfaz web local para ZTC-Wrapper.
+Interfaz web local para AG-Wrapper.
 Ejecutar: python server.py
 Acceder: http://localhost:4901
 """
@@ -36,14 +36,14 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-# Importar módulos de ZTC-Wrapper
+# Importar módulos de AG-Wrapper
 from src.sanitizer import MetadataSanitizer
 from src.detector import LegacyShield, Severity
 from src.ast_parser import ASTExtractor
 
 # Configuración
 APP_DIR = Path(__file__).parent
-DB_PATH = APP_DIR / "ztc_history.db"
+DB_PATH = APP_DIR / "ag_history.db"
 STATIC_DIR = APP_DIR / "static"
 TEMPLATES_DIR = APP_DIR / "templates"
 
@@ -53,7 +53,7 @@ TEMPLATES_DIR.mkdir(exist_ok=True)
 
 # Inicializar app
 app = FastAPI(
-    title="ZTC-Wrapper Dashboard",
+    title="AG-Wrapper Dashboard",
     description="Zero-Trust AI Agent Wrapper - Security Dashboard",
     version="1.0.3",
 )
@@ -95,7 +95,7 @@ DASHBOARD_HTML = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛡️ ZTC-Wrapper Dashboard</title>
+    <title>🛡️ AG-Wrapper Dashboard</title>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -176,7 +176,7 @@ DASHBOARD_HTML = """
                     🛡️
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold">ZTC-Wrapper</h1>
+                    <h1 class="text-xl font-bold">AG-Wrapper</h1>
                     <p class="text-xs text-gray-400">Zero-Trust AI Agent Security</p>
                 </div>
             </div>
@@ -370,7 +370,7 @@ DASHBOARD_HTML = """
     <!-- Footer -->
     <footer class="border-t border-white/10 bg-black/20 py-6 mt-12">
         <div class="max-w-7xl mx-auto px-6 text-center text-gray-500 text-sm">
-            <p>🛡️ ZTC-Wrapper v1.0.3 | Built with ❤️ for the community</p>
+            <p>🛡️ AG-Wrapper v1.0.3 | Built with ❤️ for the community</p>
         </div>
     </footer>
 
@@ -649,7 +649,7 @@ async def get_history():
 if __name__ == "__main__":
     print("""
     ╔═══════════════════════════════════════════════════════════╗
-    ║     🛡️ ZTC-Wrapper Dashboard v1.0.3                       ║
+    ║     🛡️ AG-Wrapper Dashboard v1.0.3                       ║
     ║     Zero-Trust AI Agent Security                         ║
     ╠═══════════════════════════════════════════════════════════╣
     ║                                                           ║

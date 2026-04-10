@@ -1,7 +1,7 @@
 """
-🛡️ ZTC-Wrapper - Configuración del Proyecto
+🛡️ AG-Wrapper - Configuración del Proyecto
 
-Carga y gestiona la configuración desde .ztcrc
+Carga y gestiona la configuración desde .agrc
 """
 
 import os
@@ -38,25 +38,25 @@ class IgnoreConfig:
 
 
 @dataclass
-class ZTCConfig:
-    """Configuración principal de ZTC-Wrapper."""
+class AGConfig:
+    """Configuración principal de AG-Wrapper."""
 
     detector: DetectorConfig = field(default_factory=DetectorConfig)
     sanitizer: SanitizerConfig = field(default_factory=SanitizerConfig)
     ignore: IgnoreConfig = field(default_factory=IgnoreConfig)
 
     @classmethod
-    def load(cls, project_path: str = ".") -> "ZTCConfig":
+    def load(cls, project_path: str = ".") -> "AGConfig":
         """
-        Carga configuración desde .ztcrc en el proyecto.
+        Carga configuración desde .agrc en el proyecto.
 
         Args:
-            project_path: Ruta al proyecto (donde está .ztcrc)
+            project_path: Ruta al proyecto (donde está .agrc)
 
         Returns:
-            ZTCConfig con valores por defecto si no existe archivo
+            AGConfig con valores por defecto si no existe archivo
         """
-        config_path = os.path.join(project_path, ".ztcrc")
+        config_path = os.path.join(project_path, ".agrc")
 
         if not os.path.exists(config_path):
             return cls()  # Return defaults
@@ -88,18 +88,18 @@ class ZTCConfig:
                 ),
             )
         except Exception as e:
-            print(f"Warning: Error loading .ztcrc: {e}")
+            print(f"Warning: Error loading .agrc: {e}")
             return cls()  # Return defaults
 
 
 def get_project_root() -> str:
-    """Detecta la raíz del proyecto buscando .ztcrc o .git"""
+    """Detecta la raíz del proyecto buscando .agrc o .git"""
     # Buscar hacia arriba desde el directorio actual
     current = Path.cwd()
 
     # Máximo 5 niveles hacia arriba
     for _ in range(5):
-        if (current / ".ztcrc").exists() or (current / ".git").exists():
+        if (current / ".agrc").exists() or (current / ".git").exists():
             return str(current)
         parent = current.parent
         if parent == current:  # Root reached

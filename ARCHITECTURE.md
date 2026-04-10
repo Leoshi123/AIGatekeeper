@@ -1,4 +1,4 @@
-# 🏗️ ZTC-Wrapper - Arquitectura Técnica
+# 🏗️ AIGatekeeper - Arquitectura Técnica
 
 Este documento describe la arquitectura interna del proyecto, sus módulos principales y cómo interactúan entre sí.
 
@@ -7,7 +7,7 @@ Este documento describe la arquitectura interna del proyecto, sus módulos princ
 ## 📁 Estructura del Proyecto
 
 ```
-zero-trust-ai-agent/
+AIGatekeeper/
 ├── src/
 │   ├── __init__.py              # Paquete principal
 │   ├── cli.py                    # Interfaz CLI (Click)
@@ -172,7 +172,7 @@ print(result.security_issues_found)  # Cantidad de issues encontrados
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           ZTC-WRAPPER FLOW                              │
+│                           AIGatekeeper FLOW                              │
 └─────────────────────────────────────────────────────────────────────────┘
 
   ┌──────────┐     ┌──────────────┐     ┌─────────────────┐

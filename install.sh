@@ -102,8 +102,8 @@ install_deps_macos() {
     print_success "Done"
 }
 
-install_ztc() {
-    print_status "Installing ZTC-Wrapper..."
+install_ag() {
+    print_status "Installing AG-Wrapper..."
     
     # Create venv
     if [ ! -d "venv" ]; then
@@ -117,7 +117,7 @@ install_ztc() {
     pip install -r requirements.txt
     pip install pytest pytest-cov
     
-    print_success "ZTC-Wrapper installed!"
+    print_success "AG-Wrapper installed!"
     echo ""
     echo "=========================================="
     echo "  INSTALLATION COMPLETE"
@@ -147,7 +147,7 @@ main() {
         macos) install_deps_macos ;;
     esac
     
-    install_ztc
+    install_ag
 }
 
 main "$@"

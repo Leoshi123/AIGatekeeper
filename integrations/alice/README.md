@@ -1,14 +1,14 @@
 # =============================================================================
-# ZTC-Wrapper Integration for Alice AI
+# AIGatekeeper Integration for Alice AI
 # 
-# Configure Alice to use ZTC-Wrapper as a security layer.
+# Configure Alice to use AIGatekeeper as a security layer.
 # =============================================================================
 
 # METHOD 1: Alice Config File
-# Create ~/.alice/ztc_config.yaml:
+# Create ~/.alice/ag_config.yaml:
 
 """
-ztc:
+ag:
   enabled: true
   python_path: python
   project_root: .
@@ -62,27 +62,27 @@ hooks:
 # Add to ~/.alice/env:
 
 """
-ZTC_ENABLED=1
-ZTC_BLOCK_CRITICAL=1
-ZTC_SCAN_ON_GENERATE=1
-ZTC_PRUNE_CONTEXT=1
-ZTC_SANITIZE_OUTPUT=1
+AG_ENABLED=1
+AG_BLOCK_CRITICAL=1
+AG_SCAN_ON_GENERATE=1
+AG_PRUNE_CONTEXT=1
+AG_SANITIZE_OUTPUT=1
 """
 
 # METHOD 3: Python Module for Alice
-# File: ~/.alice/plugins/ztc_wrapper.py
+# File: ~/.alice/plugins/ag_wrapper.py
 
 """
-# ZTC-Wrapper Plugin for Alice
+# AG-Wrapper Plugin for Alice
 import subprocess
 import os
 
-class ZTCWrapperPlugin:
+class AIGatekeeperPlugin:
     '''Security wrapper for Alice AI'''
     
     def __init__(self):
-        self.enabled = os.getenv('ZTC_ENABLED', '1') == '1'
-        self.block_critical = os.getenv('ZTC_BLOCK_CRITICAL', '1') == '1'
+        self.enabled = os.getenv('AG_ENABLED', '1') == '1'
+        self.block_critical = os.getenv('AG_BLOCK_CRITICAL', '1') == '1'
     
     def before_generate(self, context):
         '''Sanitize input before generation'''
@@ -124,7 +124,7 @@ class ZTCWrapperPlugin:
         return result.stdout if result.returncode == 0 else code
 
 # Register
-PLUGIN = ZTCWrapperPlugin
+PLUGIN = AIGatekeeperPlugin
 """
 
 echo "Alice integration configured!"

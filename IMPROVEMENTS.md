@@ -1,4 +1,4 @@
-# 🛡️ ZTC-Wrapper - Mejoras y Roadmap
+# 🛡️ AIGatekeeper - Mejoras y Roadmap
 
 Ideas y funcionalidades para mejorar el proyecto. ¡Anímate a contribuir!
 
@@ -25,7 +25,7 @@ pip install tree-sitter-python tree-sitter-javascript tree-sitter-typescript
 
 ```bash
 # Uso propuesto
-ztc run "claude code" --sanitize --prune
+ag run "claude code" --sanitize --prune
 ```
 
 ### 3. Dashboard Web (UI)
@@ -67,13 +67,13 @@ ZombiePattern(
 ```
 
 ### 6. Configuración Personalizable
-- **Descripción**: Archivo de configuración `ztc.yaml` para personalizar reglas
+- **Descripción**: Archivo de configuración `ag.yaml` para personalizar reglas
 - **Estado**: Pendiente
 - **Dificultad**: Baja
 - **Beneficio**: Adaptar a diferentes proyectos/equipos
 
 ```yaml
-# ztc.yaml ejemplo
+# ag.yaml ejemplo
 sanitizer:
   remove_comments: true
   remove_paths: true

@@ -1,5 +1,5 @@
 # =============================================================================
-# ZTC-Wrapper Installation Script (Windows PowerShell)
+# AG-Wrapper Installation Script (Windows PowerShell)
 # Supports: Windows 10/11
 # =============================================================================
 
@@ -124,10 +124,10 @@ function Check-Pip {
     }
 }
 
-function Install-ZTC {
+function Install-AG {
     param([string]$PythonCmd)
 
-    Write-Status "Installing ZTC-Wrapper..."
+    Write-Status "Installing AG-Wrapper..."
 
     # Create venv if not exists
     if (-Not (Test-Path "venv")) {
@@ -199,4 +199,4 @@ if (-Not (Check-Pip -PythonCmd $pythonCmd)) {
     exit 1
 }
 
-Install-ZTC -PythonCmd $pythonCmd
+Install-AG -PythonCmd $pythonCmd

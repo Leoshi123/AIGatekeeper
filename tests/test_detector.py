@@ -515,16 +515,16 @@ def hello():
         assert any("secret" in r.pattern.pattern.lower() for r in results)
 
     def test_ignore_magic_comment_python(self):
-        """Debe ignorar líneas con # ztc: ignore en Python."""
-        code = "eval(user_input)  # ztc: ignore"
+        """Debe ignorar líneas con # ag: ignore en Python."""
+        code = "eval(user_input)  # ag: ignore"
         detector = LegacyShield()
         results = detector.scan_code(code)
 
         assert len(results) == 0
 
     def test_ignore_magic_comment_js(self):
-        """Debe ignorar líneas con // ztc: ignore en JS."""
-        code = "eval(userInput)  // ztc: ignore"
+        """Debe ignorar líneas con // ag: ignore en JS."""
+        code = "eval(userInput)  // ag: ignore"
         detector = LegacyShield(languages=["javascript"])
         results = detector.scan_code(code, file_path="test.js")
 

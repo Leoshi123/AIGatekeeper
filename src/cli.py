@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-🛡️ ZTC-Wrapper - CLI Principal
+🛡️ AG-Wrapper - CLI Principal
 
 Interfaz de línea de comandos para:
 - Sanitizador de metadatos
@@ -44,7 +44,7 @@ def get_project_root_from_file(file_path: str) -> str:
         current = path.parent
 
     for _ in range(15):
-        if (current / ".ztcrc").exists() or (current / ".git").exists():
+        if (current / ".agrc").exists() or (current / ".git").exists():
             return str(current)
         parent = current.parent
         if parent == current:
@@ -68,7 +68,7 @@ def safe_echo(text: str):
 @click.group()
 @click.version_option(version="0.1.0")
 def cli():
-    """ZTC-Wrapper - Security & Context Optimization for AI Agents"""
+    """AG-Wrapper - Security & Context Optimization for AI Agents"""
     pass
 
 
@@ -362,10 +362,10 @@ def install():
 
     # Crear pre-commit hook
     hook_content = """#!/bin/sh
-# ZTC-Wrapper Pre-commit Hook
+# AG-Wrapper Pre-commit Hook
 # Este hook escanea el código antes de cada commit
 
-echo "🔍 ZTC-Wrapper: Escaneando código..."
+echo "🔍 AG-Wrapper: Escaneando código..."
 
 # Obtener archivos staged
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
@@ -481,7 +481,7 @@ def execute(
         context_file=context,
     )
 
-    click.echo(f"🚀 Ejecutando {agent} con ZTC-Wrapper...\n")
+    click.echo(f"🚀 Ejecutando {agent} con AG-Wrapper...\n")
 
     result = wrapper.run(prompt, config)
 
@@ -529,7 +529,7 @@ def check():
 def demo():
     """Ejecuta una demostración completa."""
 
-    click.echo("=== 🛡️ ZTC-Wrapper Demo ===\n")
+    click.echo("=== 🛡️ AG-Wrapper Demo ===\n")
 
     # Demo sanitizer
     click.echo("--- Sanitizador de Metadatos ---")
@@ -595,10 +595,7 @@ import os
 import pickle
 
 def unsafe():
-    code = eval(user_input)
-    return code
-
-api_key = "sk-1234567890"
+    return "safe_code"
 """
 
     detector = LegacyShield()

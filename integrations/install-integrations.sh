@@ -1,8 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# ZTC-Wrapper Integration Installer (Bash/Shell)
+# AG-Wrapper Integration Installer (Bash/Shell)
 # 
-# This script integrates ZTC-Wrapper with popular AI coding assistants.
+# This script integrates AG-Wrapper with popular AI coding assistants.
 # Run as: ./install-integrations.sh
 # =============================================================================
 
@@ -45,12 +45,12 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Get ZTC path
-get_ztc_python() {
+get_ag_python() {
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    local ztc_root="$(cd "$script_dir/.." && pwd)"
+    local ag_root="$(cd "$script_dir/.." && pwd)"
     
-    if [ -f "$ztc_root/venv/bin/python" ]; then
-        echo "$ztc_root/venv/bin/python"
+    if [ -f "$ag_root/venv/bin/python" ]; then
+        echo "$ag_root/venv/bin/python"
     else
         echo "python3"
     fi
@@ -73,8 +73,8 @@ install_vscode() {
     
     # Update python path in tasks.json
     if [ -f "$workspace_dir/.vscode/tasks.json" ]; then
-        local ztc_python=$(get_ztc_python)
-        sed -i "s|python.exe|$(basename $ztc_python)|g" "$workspace_dir/.vscode/tasks.json"
+        local ag_python=$(get_ag_python)
+        sed -i "s|python.exe|$(basename $ag_python)|g" "$workspace_dir/.vscode/tasks.json"
         sed -i "s|venv/Scripts/python.exe|venv/bin/python|g" "$workspace_dir/.vscode/tasks.json"
     fi
     
@@ -104,8 +104,8 @@ install_nova() {
     local nova_dir="$HOME/.nova"
     mkdir -p "$nova_dir"
     
-    cat > "$nova_dir/ztc.conf" << 'EOF'
-[ztc]
+    cat > "$nova_dir/ag.conf" << 'EOF'
+[ag]
 enabled = true
 python_path = python3
 project_root = .
@@ -124,8 +124,8 @@ install_alice() {
     local alice_dir="$HOME/.alice"
     mkdir -p "$alice_dir"
     
-    cat > "$alice_dir/ztc.yaml" << 'EOF'
-ztc:
+    cat > "$alice_dir/ag.yaml" << 'EOF'
+ag:
   enabled: true
   python_path: python3
   project_root: .
@@ -138,9 +138,9 @@ ztc:
 EOF
     
     cat > "$alice_dir/env" << 'EOF'
-export ZTC_ENABLED=true
-export ZTC_BLOCK_CRITICAL=true
-export ZTC_SANITIZE_OUTPUT=true
+export AG_ENABLED=true
+export AG_BLOCK_CRITICAL=true
+export AG_SANITIZE_OUTPUT=true
 EOF
     
     echo -e "${GREEN}[OK]${NC} Alice integration installed"
@@ -152,9 +152,9 @@ install_build() {
     local build_dir="$HOME/.build"
     mkdir -p "$build_dir"
     
-    cat > "$build_dir/ztc.yaml" << 'EOF'
+    cat > "$build_dir/ag.yaml" << 'EOF'
 version: "1.0"
-ztc:
+ag:
   enabled: true
   mode: "wrapper"
   wrapper:
@@ -164,9 +164,9 @@ ztc:
 EOF
     
     cat > "$build_dir/env" << 'EOF'
-export BUILD_ZTC_ENABLED=1
-export BUILD_ZTC_BLOCK=1
-export BUILD_ZTC_SANITIZE=1
+export BUILD_AG_ENABLED=1
+export BUILD_AG_BLOCK=1
+export BUILD_AG_SANITIZE=1
 EOF
     
     echo -e "${GREEN}[OK]${NC} Build integration installed"
@@ -176,10 +176,10 @@ uninstall_all() {
     echo -e "${BLUE}[INFO]${NC} Uninstalling all integrations..."
     
     # Remove configs
-    rm -f "$HOME/.nova/ztc.conf" 2>/dev/null || true
-    rm -f "$HOME/.alice/ztc.yaml" 2>/dev/null || true
+    rm -f "$HOME/.nova/ag.conf" 2>/dev/null || true
+    rm -f "$HOME/.alice/ag.yaml" 2>/dev/null || true
     rm -f "$HOME/.alice/env" 2>/dev/null || true
-    rm -f "$HOME/.build/ztc.yaml" 2>/dev/null || true
+    rm -f "$HOME/.build/ag.yaml" 2>/dev/null || true
     rm -f "$HOME/.build/env" 2>/dev/null || true
     
     # Remove .vscode files
@@ -192,7 +192,7 @@ uninstall_all() {
 # Main
 echo ""
 echo -e "${BLUE}==========================================${NC}"
-echo -e "${BLUE}  ZTC-Wrapper Integration Installer${NC}"
+echo -e "${BLUE}  AG-Wrapper Integration Installer${NC}"
 echo -e "${BLUE}==========================================${NC}"
 echo ""
 
@@ -228,7 +228,7 @@ echo -e "${GREEN}  Installation Complete!${NC}"
 echo -e "${GREEN}==========================================${NC}"
 echo ""
 echo -e "${BLUE}Usage examples:${NC}"
-echo -e "  $(get_ztc_python) -m src.cli sanitize scan file.py"
-echo -e "  $(get_ztc_python) -m src.cli shield scan file.py"
-echo -e "  $(get_ztc_python) -m src.cli prune extract file.py --task 'fix bug'"
+echo -e "  $(get_ag_python) -m src.cli sanitize scan file.py"
+echo -e "  $(get_ag_python) -m src.cli shield scan file.py"
+echo -e "  $(get_ag_python) -m src.cli prune extract file.py --task 'fix bug'"
 echo ""

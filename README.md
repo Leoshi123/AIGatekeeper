@@ -1,10 +1,10 @@
-# 🛡️ Zero-Trust AI Agent Wrapper (Agente de Confianza Cero)
+# 🛡️ AIGatekeeper (Agente de Confianza Cero)
 
-[![Tests](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/actions/workflows/ci.yml/badge.svg)](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/actions/workflows/ci.yml)
-[![Coverage](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-/branch/main/graph/badge.svg)](https://codecov.io/gh/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-)
+[![Tests](https://github.com/Leoshi123/AIGatekeeper/actions/workflows/ci.yml/badge.svg)](https://github.com/Leoshi123/AIGatekeeper/actions/workflows/ci.yml)
+[![Coverage](https://codecov.io/gh/Leoshi123/AIGatekeeper/branch/main/graph/badge.svg)](https://codecov.io/gh/Leoshi123/AIGatekeeper)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-)
+[![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](https://github.com/Leoshi123/AIGatekeeper)
 
 > 🌐 Available in: English, Español
 
@@ -79,8 +79,8 @@ chmod +x install.sh
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/Leoshi123/-Zero-Trust-AI-Agent-Wrapper-o-Agente-de-Confianza-Cero-.git
-cd zero-trust-ai-agent
+git clone https://github.com/Leoshi123/AIGatekeeper.git
+cd AIGatekeeper
 
 # Crear entorno virtual
 python -m venv venv
@@ -138,7 +138,7 @@ Luego abre: **http://localhost:4901**
 
 ## 🤖 MCP Server (Model Context Protocol)
 
-Exponé las capacidades de seguridad del ZTC-Wrapper directamente a agentes de IA (Claude Code, Cursor, Windsurf, etc.) vía MCP.
+Exponé las capacidades de seguridad de AIGatekeeper directamente a agentes de IA (Claude Code, Cursor, Windsurf, etc.) vía MCP.
 
 ### Tools disponibles
 
@@ -157,11 +157,11 @@ Agregá al config de tu cliente MCP:
 ```json
 {
   "mcpServers": {
-    "ztc-wrapper": {
+    "ag": {
       "command": "python",
-      "args": ["C:/Users/leosh/OneDrive/Documents/zero-trust-ai-agent/src/mcp_server.py", "stdio"],
+      "args": ["C:/Users/leosh/OneDrive/Documents/AIGatekeeper/src/mcp_server.py", "stdio"],
       "env": {
-        "PYTHONPATH": "C:/Users/leosh/OneDrive/Documents/zero-trust-ai-agent"
+        "PYTHONPATH": "C:/Users/leosh/OneDrive/Documents/AIGatekeeper"
       }
     }
   }
@@ -180,9 +180,9 @@ Escucha en **http://127.0.0.1:8765/mcp**
 
 | Resource | Descripción |
 |----------|-------------|
-| `ztc://version` | Versión del ZTC-Wrapper |
-| `ztc://languages` | Lenguajes soportados y patrones |
-| `ztc://severity-levels` | Niveles de severidad del scanner |
+| `ag://version` | Versión de AIGatekeeper |
+| `ag://languages` | Lenguajes soportados y patrones |
+| `ag://severity-levels` | Niveles de severidad del scanner |
 
 ### Prompts predefinidos
 
@@ -217,7 +217,7 @@ config.save()
 
 ## 🔧 Configuración
 
-Crea un archivo `.ztcrc` en la raíz de tu proyecto:
+Crea un archivo `.agrc` en la raíz de tu proyecto:
 
 ```json
 {

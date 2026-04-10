@@ -1,17 +1,17 @@
 # =============================================================================
-# ZTC-Wrapper Integration for Nova AI
+# AIGatekeeper Integration for Nova AI
 # 
-# Nova is an AI coding assistant. Configure it to use ZTC-Wrapper.
+# Nova is an AI coding assistant. Configure it to use AIGatekeeper.
 # =============================================================================
 
-# Install ZTC-Wrapper first
+# Install AG-Wrapper first
 # ./install.sh  # or install.ps1 on Windows
 
 # METHOD 1: Nova Configuration
 # Add to ~/.novarc or project .nova/config:
 
 """
-[ztc]
+[ag]
 enabled = true
 python_path = python
 project_root = .
@@ -22,12 +22,12 @@ prune_context = true
 sanitize_input = true
 sanitize_output = true
 
-[ztc.security]
+[ag.security]
 scan_on_generate = true
 auto_scan_patterns = "eval,exec,pickle,yaml,subprocess"
 allowed_severities = "LOW,MEDIUM"
 
-[ztc.pruning]
+[ag.pruning]
 enabled = true
 reduction_target = 70
 include_signatures = true
@@ -43,7 +43,7 @@ import sys
 import subprocess
 
 def pre_generate_hook(code_context):
-    """Run ZTC-Wrapper before AI generates code"""
+    """Run AG-Wrapper before AI generates code"""
     # Sanitize input
     result = subprocess.run(
         ["python", "-m", "src.cli", "sanitize", "clean", code_context],
@@ -54,17 +54,17 @@ def pre_generate_hook(code_context):
 """
 
 # METHOD 3: Nova Security Plugin
-# File: ~/.nova/plugins/ztc_security.py
+# File: ~/.nova/plugins/ag_security.py
 
 """
-# ZTC-Wrapper Security Plugin for Nova
-# Place in: ~/.nova/plugins/ztc_security.py
+# AIGatekeeper Security Plugin for Nova
+# Place in: ~/.nova/plugins/ag_security.py
 
 import subprocess
 import json
 
-class ZTCSecurityPlugin:
-    name = "ztc-security"
+class AIGatekeeperSecurityPlugin:
+    name = "ag-security"
     version = "1.0.0"
     
     def __init__(self, config):
@@ -101,20 +101,20 @@ class ZTCSecurityPlugin:
         return result.stdout if result.returncode == 0 else code
 
 # Register the plugin
-PLUGIN = ZTCSecurityPlugin
+PLUGIN = AIGatekeeperSecurityPlugin
 """
 
 # METHOD 4: Environment Variables
 # Add to your shell profile (~/.bashrc, ~/.zshrc):
 
 """
-# ZTC-Wrapper for Nova
-export ZTC_ENABLED=true
-export ZTC_PYTHON=python
-export ZTC_PROJECT_ROOT=.
-export ZTC_BLOCK_CRITICAL=true
-export ZTC_PRUNE_CONTEXT=true
-export NOVA_USE_ZTC=true
+# AG-Wrapper for Nova
+export AG_ENABLED=true
+export AG_PYTHON=python
+export AG_PROJECT_ROOT=.
+export AG_BLOCK_CRITICAL=true
+export AG_PRUNE_CONTEXT=true
+export NOVA_USE_AG=true
 """
 
 # Run a security check with Nova context

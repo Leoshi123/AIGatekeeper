@@ -1,5 +1,5 @@
 # =============================================================================
-# ZTC-Wrapper Integration for Cursor IDE
+# AIGatekeeper Integration for Cursor IDE
 # 
 # Cursor uses VSCode's architecture, so similar configurations apply.
 # For native AI integration, we use MCP (Model Context Protocol).
@@ -10,16 +10,16 @@
 
 """
 {
-  // Enable ZTC-Wrapper features
-  "cursor.ztc.enabled": true,
-  "cursor.ztc.pythonPath": "python",
-  "cursor.ztc.blockOnCritical": true,
+  // Enable AG-Wrapper features
+  "cursor.ag.enabled": true,
+  "cursor.ag.pythonPath": "python",
+  "cursor.ag.blockOnCritical": true,
   
   // Configure AI to use ZTC-Wrapper as middleware
   "cursor.chat.llm": "claude-sonnet-4",
   "cursor.chat.wrappers": [
     {
-      "name": "ztc-wrapper",
+      "name": "ag-wrapper",
       "command": "python -m src.cli run execute",
       "enabled": true
     }
@@ -37,7 +37,7 @@
 """
 {
   "mcpServers": {
-    "ztc-wrapper": {
+    "ag": {
       "command": "python",
       "args": ["-m", "src.mcp_server"],
       "env": {
@@ -52,7 +52,7 @@
 # Add to .cursor/rules/commands.md:
 
 """
-# ZTC-Wrapper Commands
+# AIGatekeeper Commands
 
 ## Security Scan
 Run security scan on current file:
@@ -85,7 +85,7 @@ python -m src.cli run execute --sanitize-input --sanitize-output --block "{promp
 """
 # Agent Configuration
 
-This project uses ZTC-Wrapper for security. All AI-generated code 
+This project uses AIGatekeeper for security. All AI-generated code 
 is scanned for:
 
 - Code injection vulnerabilities (eval, exec)
@@ -95,7 +95,7 @@ is scanned for:
 - XSS patterns (innerHTML, dangerouslySetInnerHTML)
 
 The AI should:
-1. Use ZTC-Wrapper CLI for code validation
+1. Use AG-Wrapper CLI for code validation
 2. Run security scans before generating code
 3. Block critical vulnerabilities
 4. Sanitize outputs to remove AI metadata

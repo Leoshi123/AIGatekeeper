@@ -1,6 +1,6 @@
-# ZTC-Wrapper Integrations
+# AIGatekeeper Integrations
 
-Esta carpeta contiene configuraciones para integrar ZTC-Wrapper con populares asistentes de IA.
+Esta carpeta contiene configuraciones para integrar AIGatekeeper con populares asistentes de IA.
 
 ## Estructura
 
@@ -54,7 +54,7 @@ chmod +x integrations/install-integrations.sh
 
 ## Uso Directo (sin integración)
 
-Si prefieres usar ZTC-Wrapper directamente desde la terminal:
+Si prefieres usar AIGatekeeper directamente desde la terminal:
 
 ```bash
 # Activar entorno virtual
@@ -150,4 +150,4 @@ Para agregar soporte para otro editor/AI:
 4. Actualiza este README con el nuevo editor
 
 ---
-**ZTC-Wrapper** - Seguridad Zero-Trust para Agentes de IA
+**AIGatekeeper** - Seguridad Zero-Trust para Agentes de IA

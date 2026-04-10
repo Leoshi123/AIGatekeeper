@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-🛡️ ZTC-Wrapper MCP Server
+🛡️ AG-Wrapper MCP Server
 Model Context Protocol server for AI Agent security tools.
 
-Exposes ZTC-Wrapper capabilities as MCP tools:
+Exposes AG-Wrapper capabilities as MCP tools:
 - sanitize_code: Remove AI metadata, secrets, and paths
 - scan_code: Detect vulnerable patterns in a file
 - scan_directory: Scan all files in a directory
@@ -84,7 +84,7 @@ def timeout_handler(seconds: int):
     return decorator
 
 mcp = FastMCP(
-    name="ZTC-Wrapper",
+    name="AG-Wrapper",
     host="127.0.0.1",
     port=8765,
     streamable_http_path="/mcp",
@@ -370,13 +370,13 @@ def clean_code(code: str) -> str:
 # =============================================================================
 
 
-@mcp.resource("ztc://version")
+@mcp.resource("ag://version")
 def get_version() -> str:
     """Returns the ZTC-Wrapper version."""
-    return "ZTC-Wrapper v1.0.2 — Zero-Trust AI Agent Security"
+    return "AG-Wrapper v1.0.2 — Zero-Trust AI Agent Security"
 
 
-@mcp.resource("ztc://languages")
+@mcp.resource("ag://languages")
 def get_supported_languages() -> str:
     """Returns the list of supported programming languages and pattern counts."""
     languages = {
@@ -393,7 +393,7 @@ def get_supported_languages() -> str:
     return json.dumps(languages, indent=2)
 
 
-@mcp.resource("ztc://severity-levels")
+@mcp.resource("ag://severity-levels")
 def get_severity_levels() -> str:
     """Returns the severity levels used by the scanner."""
     levels = {
@@ -463,10 +463,10 @@ def _build_pruned_output(pruned) -> str:
 
 
 def _find_project_root(start_path: str) -> str:
-    """Find project root by looking for .ztcrc or .git."""
+    """Find project root by looking for .agrc or .git."""
     current = Path(start_path)
     for _ in range(15):
-        if (current / ".ztcrc").exists() or (current / ".git").exists():
+        if (current / ".agrc").exists() or (current / ".git").exists():
             return str(current)
         parent = current.parent
         if parent == current:

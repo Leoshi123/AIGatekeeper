@@ -1,7 +1,7 @@
 # =============================================================================
-# ZTC-Wrapper Integration Installer (PowerShell)
+# AG-Wrapper Integration Installer (PowerShell)
 # 
-# This script integrates ZTC-Wrapper with popular AI coding assistants.
+# This script integrates AG-Wrapper with popular AI coding assistants.
 # Run as: .\install-integrations.ps1
 # =============================================================================
 
@@ -24,16 +24,16 @@ function Write-Success { param([string]$Message) Write-Host "[OK] " -ForegroundC
 function Write-Warn { param([string]$Message) Write-Host "[WARN] " -ForegroundColor $YELLOW -NoNewline; Write-Host $Message }
 function Write-Error-Custom { param([string]$Message) Write-Host "[ERROR] " -ForegroundColor $RED -NoNewline; Write-Host $Message }
 
-function Get-ZTCPath {
-    # Find ZTC-Wrapper installation
+function Get-AGPath {
+    # Find AG-Wrapper installation
     $scriptDir = Split-Path -Parent $PSCommandPath
     if ($scriptDir -match "integrations") {
-        $ztcRoot = Split-Path -Parent $scriptDir
+        $agRoot = Split-Path -Parent $scriptDir
     } else {
-        $ztcRoot = $scriptDir
+        $agRoot = $scriptDir
     }
     
-    $venvPython = Join-Path $ztcRoot "venv\Scripts\python.exe"
+    $venvPython = Join-Path $agRoot "venv\Scripts\python.exe"
     if (Test-Path $venvPython) {
         return $venvPython
     }
@@ -50,10 +50,10 @@ function Install-VSCode {
     
     # Create VSCode settings
     $vscodeSettings = @{
-        "ztcWrapper.enabled" = $true
-        "ztcWrapper.pythonPath" = Get-ZTCPath
-        "ztcWrapper.blockOnCritical" = $true
-        "ztcWrapper.pruneContext" = $true
+        "agWrapper.enabled" = $true
+        "agWrapper.pythonPath" = Get-AGPath
+        "agWrapper.blockOnCritical" = $true
+        "agWrapper.pruneContext" = $true
     }
     
     # Copy integration files
@@ -70,7 +70,7 @@ function Install-VSCode {
     }
     
     Write-Success "VSCode integration installed"
-    Write-Status "Press Ctrl+Shift+P and run 'Tasks: Run Task' to use ZTC tasks"
+    Write-Status "Press Ctrl+Shift+P and run 'Tasks: Run Task' to use AG tasks"
 }
 
 function Install-Cursor {
@@ -104,7 +104,7 @@ function Install-Nova {
     
     # Create Nova config
     $config = @"
-[ztc]
+[ag]
 enabled = true
 python_path = python
 project_root = .
@@ -114,7 +114,7 @@ sanitize_input = true
 sanitize_output = true
 "@
     
-    $configPath = Join-Path $novaDir "ztc.conf"
+    $configPath = Join-Path $novaDir "ag.conf"
     $config | Out-File -FilePath $configPath -Encoding utf8
     
     Write-Success "Nova integration installed"
@@ -130,7 +130,7 @@ function Install-Alice {
     
     # Create Alice config
     $config = @"
-ztc:
+ag:
   enabled: true
   python_path: python
   project_root: .
@@ -142,14 +142,14 @@ ztc:
     output: true
 "@
     
-    $configPath = Join-Path $aliceDir "ztc.yaml"
+    $configPath = Join-Path $aliceDir "ag.yaml"
     $config | Out-File -FilePath $configPath -Encoding utf8
     
     # Environment variables
     $envContent = @"
-export ZTC_ENABLED=true
-export ZTC_BLOCK_CRITICAL=true
-export ZTC_SANITIZE_OUTPUT=true
+export AG_ENABLED=true
+export AG_BLOCK_CRITICAL=true
+export AG_SANITIZE_OUTPUT=true
 "@
     
     $envPath = Join-Path $aliceDir "env"
@@ -169,7 +169,7 @@ function Install-Build {
     # Create Build config
     $config = @"
 version: "1.0"
-ztc:
+ag:
   enabled: true
   mode: "wrapper"
   wrapper:
@@ -178,14 +178,14 @@ ztc:
     block_on_critical: true
 "@
     
-    $configPath = Join-Path $buildDir "ztc.yaml"
+    $configPath = Join-Path $buildDir "ag.yaml"
     $config | Out-File -FilePath $configPath -Encoding utf8
     
     # Environment
     $envContent = @"
-export BUILD_ZTC_ENABLED=1
-export BUILD_ZTC_BLOCK=1
-export BUILD_ZTC_SANITIZE=1
+export BUILD_AG_ENABLED=1
+export BUILD_AG_BLOCK=1
+export BUILD_AG_SANITIZE=1
 "@
     
     $envPath = Join-Path $buildDir "env"
@@ -205,7 +205,7 @@ function Uninstall-All {
     
     foreach ($dir in $dirs) {
         if (Test-Path $dir) {
-            Remove-Item (Join-Path $dir "ztc.*") -ErrorAction SilentlyContinue
+            Remove-Item (Join-Path $dir "ag.*") -ErrorAction SilentlyContinue
             Remove-Item (Join-Path $dir "env") -ErrorAction SilentlyContinue
         }
     }
@@ -226,7 +226,7 @@ function Uninstall-All {
 # Main
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor $BLUE
-Write-Host "  ZTC-Wrapper Integration Installer" -ForegroundColor $BLUE
+Write-Host "  AG-Wrapper Integration Installer" -ForegroundColor $BLUE
 Write-Host "==========================================" -ForegroundColor $BLUE
 Write-Host ""
 

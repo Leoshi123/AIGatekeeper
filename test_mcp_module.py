@@ -4,7 +4,7 @@
 import sys
 import json
 
-sys.path.insert(0, "C:/Users/leosh/OneDrive/Documents/zero-trust-ai-agent")
+sys.path.insert(0, "C:/Users/leosh/OneDrive/Documents/AIGatekeeper")
 
 # Test that imports work
 try:

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "ztc-wrapper": {
+    "ag-wrapper": {
       "command": "python",
       "args": ["-m", "src.mcp_server"],
       "env": {
