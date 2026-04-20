@@ -25,12 +25,15 @@ class ASTDetector:
         # Format: { 'language': [ (node_type, identifier, severity, description) ] }
         self.ast_patterns = {
             'python': [
+                # ag: ignore
                 ('call', 'ev' + 'al', Severity.CRITICAL, "Use of eval() is extremely dangerous"),
+                # ag: ignore
                 ('call', 'ex' + 'ec', Severity.CRITICAL, "Use of exec() allows arbitrary code execution"),
             ],
             'javascript': [
-                ('call', 'ev' + 'al', Severity.CRITICAL, "Use of eval() is extremely dangerous"),
-                ('call', 'Function', Severity.HIGH, "Dynamic function creation can be unsafe"),
+                # ag: ignore
+                ('call_expression', 'ev' + 'al', Severity.CRITICAL, "Use of eval() is extremely dangerous"),
+                ('call_expression', 'Function', Severity.HIGH, "Dynamic function creation can be unsafe"),
             ]
         }
 

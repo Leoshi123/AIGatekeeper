@@ -16,3 +16,6 @@ node_modules/
 # Falsos positivos conocidos
 # Regex .exec() en contexto de parseo (no ejecución de código)
 **/generator_template.js
+
+# ASTDetector definitions ( falsos positivos en la definición de patrones)
+src/detector/ast_detector.py
