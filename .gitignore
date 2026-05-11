@@ -45,6 +45,9 @@ temp/
 tmp/
 *.tmp
 
+# --- Base de datos ---
+*.db
+
 # --- testing ---
 .pytest_cache/
 .coverage
