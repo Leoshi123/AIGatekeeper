@@ -66,7 +66,7 @@ def safe_echo(text: str):
 
 
 @click.group()
-@click.version_option(version="2.0.0")
+@click.version_option(version="2.1.0")
 def cli():
     """AG-Wrapper - Security & Context Optimization for AI Agents"""
     pass
@@ -696,6 +696,222 @@ def unsafe():
     click.echo(f"Problemas encontrados: {len(results)}")
     for r in results:
         click.echo(f"  [{r.pattern.severity.value}] {r.pattern.description}")
+
+
+# ============================================================================
+# COMANDOS DE CONFIGURACION (ag.yaml)
+# ============================================================================
+
+
+@cli.group()
+def config():
+    """Comandos de configuracion (ag.yaml)"""
+    pass
+
+
+@config.command(name="show")
+@click.option("--path", "-p", type=click.Path(), help="Ruta a ag.yaml especifica")
+def config_show(path: str):
+    """Muestra la configuracion activa (YAML + defaults)."""
+    from src.config.yaml_config import YamlConfig
+
+    try:
+        cfg = YamlConfig.load(path) if path else YamlConfig.find_and_load()
+    except FileNotFoundError:
+        click.echo("⚠️  No se encontro ag.yaml. Usando valores por defecto.")
+        cfg = YamlConfig()
+
+    import yaml
+    click.echo(yaml.safe_dump(cfg.to_dict(), default_flow_style=False, sort_keys=False))
+    if cfg.source_path:
+        click.echo(f"\n📄 Fuente: {cfg.source_path}")
+    else:
+        click.echo("\n📄 Fuente: valores por defecto (no hay ag.yaml)")
+
+
+@config.command(name="init")
+@click.option("--force", "-f", is_flag=True, help="Sobreescribir existente")
+def config_init(force: bool):
+    """Crea un ag.yaml con valores por defecto en el directorio actual."""
+    dest = Path.cwd() / "ag.yaml"
+    if dest.exists() and not force:
+        click.echo("⚠️  ag.yaml ya existe. Usa --force para sobreescribir.")
+        return
+
+    example = """# AG-Wrapper Configuration
+# Crea este archivo en la raiz de tu proyecto para personalizar el wrapper.
+# Los valores por defecto se usan si no existe ag.yaml.
+version: "1.0"
+
+wrapper:
+  sanitize_input: true
+  sanitize_output: true
+  prune_context: false
+  block_critical: true
+  # agent_command: "claude"
+
+detector:
+  severity_threshold: "high"  # low | medium | high | critical
+  # custom_patterns:
+  #   - pattern: "my_secret_\\\\w+"
+  #     severity: "critical"
+  #     description: "Custom secret pattern"
+  #     language: "python"
+
+sanitizer:
+  remove_comments: true
+  remove_paths: true
+  preserve_shebang: true
+  preserve_copyright: false
+
+watch:
+  extensions:
+    - .py
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .go
+    - .rs
+  exclude_dirs:
+    - .git
+    - node_modules
+    - __pycache__
+    - .venv
+    - venv
+    - build
+    - dist
+  block_on_scan: false
+  quiet: false
+"""
+    dest.write_text(example, encoding="utf-8")
+    click.echo(f"✅ ag.yaml creado en: {dest}")
+
+
+# ============================================================================
+# COMANDO FILE WATCHER (ag watch)
+# ============================================================================
+
+
+@cli.command()
+@click.argument("path", default=".", type=click.Path())
+@click.option("--quiet", "-q", is_flag=True, help="Solo mostrar problemas")
+@click.option("--config", "-c", "config_path", type=click.Path(), help="Ruta a ag.yaml")
+def watch(path: str, quiet: bool, config_path: str):
+    """Vigila un directorio y escanea cambios en tiempo real.
+
+    Requiere watchdog (pip install watchdog). Usa Ctrl+C para detener.
+    """
+    from src.watcher import start_watch
+    from src.config.yaml_config import YamlConfig
+
+    cfg = None
+    if config_path:
+        cfg = YamlConfig.load(config_path)
+    elif quiet:
+        cfg = YamlConfig.find_and_load()
+        cfg.watch.quiet = True
+
+    start_watch(path, config=cfg, quiet=quiet)
+
+
+# ============================================================================
+# COMANDO WRAP (ag wrap)
+# ============================================================================
+
+
+@cli.command()
+@click.argument("prompt", required=False)
+@click.option("--agent", "-a", default="claude", help="Agente (claude, opencode, demo)")
+@click.option("--config", "-c", "config_path", type=click.Path(), help="Ruta a ag.yaml")
+@click.option("--no-sanitize", is_flag=True, help="Desactivar sanitizacion")
+@click.option("--no-block", is_flag=True, help="No bloquear en problemas criticos")
+@click.option("--stdin", "from_stdin", is_flag=True, help="Leer prompt desde stdin")
+def wrap(prompt: str, agent: str, config_path: str,
+         no_sanitize: bool, no_block: bool, from_stdin: bool):
+    """
+    Ejecuta un agente IA con el pipeline completo de seguridad.
+
+    Sanitiza el prompt, lo envia al agente, sanitiza la respuesta,
+    y escanea el output en busca de codigo vulnerable.
+
+    Ejemplos:
+
+        ag wrap "Hazme una funcion de login"
+
+        ag wrap --agent opencode "Refactoriza este modulo"
+
+        cat prompt.txt | ag wrap --stdin
+
+        ag wrap --config ag.yaml "Genera una API REST"
+    """
+    from src.wrapper import AIAgentWrapper, WrapperConfig
+
+    # Recolectar prompt
+    if from_stdin:
+        import sys as _sys
+        prompt_text = _sys.stdin.read()
+    elif prompt:
+        prompt_text = prompt
+    else:
+        click.echo("⚠️  Proporciona un prompt o usa --stdin")
+        click.echo("   Ejemplo: ag wrap \"tu prompt aqui\"")
+        click.echo("   Ejemplo: cat archivo.txt | ag wrap --stdin")
+        raise SystemExit(1)
+
+    # Cargar config desde YAML si se especifico
+    if config_path:
+        from src.config.yaml_config import YamlConfig
+        yaml_cfg = YamlConfig.load(config_path)
+        cfg = WrapperConfig(**yaml_cfg.build_wrapper_config())
+    else:
+        cfg = WrapperConfig.from_yaml()
+
+    # CLI flags sobreescriben YAML y defaults
+    cfg.agent_command = agent
+    if no_sanitize:
+        cfg.sanitize_input = False
+        cfg.sanitize_output = False
+    if no_block:
+        cfg.block_critical = False
+
+    # Verificar agente
+    wrapper = AIAgentWrapper()
+    if agent != "demo":
+        available = wrapper.check_agent_available(agent)
+        if not available:
+            click.echo(f"⚠️  '{agent}' no disponible. Usando modo demo.", err=True)
+            cfg.agent_command = "demo"
+
+    # Ejecutar
+    click.echo(f"🚀 AG-Wrap ejecutando '{cfg.agent_command}'...")
+    click.echo("   (sanitize={}, block={}, agent={})".format(
+        cfg.sanitize_input, cfg.block_critical, cfg.agent_command))
+
+    result = wrapper.run(prompt_text, cfg)
+
+    # Output
+    click.echo("")
+
+    if result.blocked:
+        click.echo("🛑 OUTPUT BLOQUEADO — problemas criticos detectados:")
+        click.echo(result.stdout)
+    else:
+        click.echo("📤 Output:")
+        click.echo(result.stdout)
+
+    if result.stderr:
+        click.echo(f"⚠️  Stderr:\n{result.stderr}", err=True)
+
+    # Resumen
+    click.echo("")
+    click.echo("📊 Resumen:")
+    click.echo(f"   Input sanitizado:   {'✅' if result.sanitized_input else '❌'}")
+    click.echo(f"   Output sanitizado:  {'✅' if result.sanitized_output else '❌'}")
+    click.echo(f"   Contexto podado:    {'✅' if result.pruned_context else '❌'}")
+    click.echo(f"   Problemas seg.:     {result.security_issues_found}")
+    click.echo(f"   Bloqueado:          {'✅' if result.blocked else '❌'}")
+    click.echo(f"   Return code:        {result.returncode}")
 
 
 # ============================================================================

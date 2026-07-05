@@ -15,7 +15,7 @@
   "cursor.ag.pythonPath": "python",
   "cursor.ag.blockOnCritical": true,
   
-  // Configure AI to use ZTC-Wrapper as middleware
+  // Configure AI to use AG-Wrapper as middleware
   "cursor.chat.llm": "claude-sonnet-4",
   "cursor.chat.wrappers": [
     {
@@ -31,8 +31,8 @@
 }
 """
 
-# METHOD 2: Using ZTC-Wrapper as MCP Server
-# For Cursor's AI to use ZTC-Wrapper, configure MCP:
+# METHOD 2: Using AG-Wrapper as MCP Server
+# For Cursor's AI to use AG-Wrapper, configure MCP:
 
 """
 {

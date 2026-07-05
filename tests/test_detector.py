@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Tests para el Detector Zombi
+🛡️ AG-Wrapper - Tests para el Detector Zombi
 
 Tests para el detector de código vulnerable.
 """

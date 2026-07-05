@@ -399,8 +399,8 @@ def scan_prompt(
 
 @mcp.resource("ag://version")
 def get_version() -> str:
-    """Returns the ZTC-Wrapper version."""
-    return "AG-Wrapper v1.0.2 — Zero-Trust AI Agent Security"
+    """Returns the AG-Wrapper version."""
+    return "AG-Wrapper v2.1.0 — AI Gatekeeper Security"
 
 
 @mcp.resource("ag://languages")

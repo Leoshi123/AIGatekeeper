@@ -10,7 +10,7 @@
 
 """
 {
-  // ZTC-Wrapper Configuration
+  // AG-Wrapper Configuration
   "agWrapper.enabled": true,
   "agWrapper.pythonPath": "python",
   

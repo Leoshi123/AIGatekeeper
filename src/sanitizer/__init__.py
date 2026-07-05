@@ -4,7 +4,7 @@
 Utiliza el core C++ nativo (pyagcore) si está disponible.
 Fallback automático a la implementación Python pura.
 
-v2.0.0-dev: C++ backend via pybind11
+v2.1.0: File watcher + YAML config + ag wrap CLI
 v1.x: Pure Python implementation
 """
 

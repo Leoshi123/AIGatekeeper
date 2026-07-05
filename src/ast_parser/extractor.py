@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Extractor AST (Context-Pruner)
+🛡️ AG-Wrapper - Extractor AST (Context-Pruner)
 
 Analiza código fuente y extrae solo las funciones relevantes para una tarea,
 reduciendo el contexto enviado a la IA hasta en 70%.

@@ -14,7 +14,7 @@
     "sanitizeOutput": true
   },
   
-  // Keyboard shortcuts for ZTC tasks
+  // Keyboard shortcuts for AG tasks
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   
   // File associations

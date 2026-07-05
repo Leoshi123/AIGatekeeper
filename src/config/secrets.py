@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Gestión de Secretos
+🛡️ AG-Wrapper - Gestión de Secretos
 """
 import os
 from pathlib import Path

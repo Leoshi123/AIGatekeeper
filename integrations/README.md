@@ -80,17 +80,17 @@ python -m src.cli run execute "tu prompt aquí" --block
 
 1. Copia `vscode/tasks.json` a `.vscode/tasks.json`
 2. Copia `vscode/settings.json` a `.vscode/settings.json`
-3. Presiona `Ctrl+Shift+P` → "Tasks: Run Task" → selecciona una tarea ZTC
+3. Presiona `Ctrl+Shift+P` → "Tasks: Run Task" → selecciona una tarea AG
 
 **Tareas disponibles:**
-- `ZTC: Security Scan` - Escanea el archivo actual
-- `ZTC: Prune Context` - Poda contexto para tarea específica
-- `ZTC: Sanitize Code` - Limpia metadatos
+- `AG: Security Scan` - Escanea el archivo actual
+- `AG: Prune Context` - Poda contexto para tarea específica
+- `AG: Sanitize Code` - Limpia metadatos
 
 ### Cursor IDE
 
 1. Agrega configuración MCP en `.cursor/mcp.json`
-2. Cursor usará ZTC-Wrapper automáticamente
+2. Cursor usará AG-Wrapper automáticamente
 
 ### Nova, Alice, Build
 
@@ -99,21 +99,21 @@ Consulta los README.md en cada carpeta para instrucciones específicas.
 ## Variables de Entorno
 
 ```bash
-# Habilitar ZTC-Wrapper
-export ZTC_ENABLED=true
+# Habilitar AG-Wrapper
+export AG_ENABLED=true
 
 # Bloquear en problemas críticos
-export ZTC_BLOCK_CRITICAL=true
+export AG_BLOCK_CRITICAL=true
 
 # Sanitizar input/output
-export ZTC_SANITIZE_INPUT=true
-export ZTC_SANITIZE_OUTPUT=true
+export AG_SANITIZE_INPUT=true
+export AG_SANITIZE_OUTPUT=true
 
 # Podar contexto automáticamente
-export ZTC_PRUNE_CONTEXT=true
+export AG_PRUNE_CONTEXT=true
 
 # Ruta de Python
-export ZTC_PYTHON=python
+export AG_PYTHON=python
 ```
 
 ## Verificar Instalación
@@ -130,12 +130,12 @@ python -m src.cli run check
 - Actívalo: `source venv/bin/activate` o `.\venv\Scripts\Activate.ps1`
 
 ### "Module not found: src"
-- Asegúrate de estar en la raíz del proyecto ZTC-Wrapper
+- Asegúrate de estar en la raíz del proyecto AG-Wrapper
 - Verifica PYTHONPATH
 
 ### Integración no funciona
 - Consulta el README.md específico del editor
-- Ejecuta el comando directamente para verificar que ZTC funciona:
+- Ejecuta el comando directamente para verificar que AG funciona:
   ```bash
   python -m src.cli shield scan tu_archivo.py
   ```
@@ -150,4 +150,4 @@ Para agregar soporte para otro editor/AI:
 4. Actualiza este README con el nuevo editor
 
 ---
-**AIGatekeeper** - Seguridad Zero-Trust para Agentes de IA
+**AIGatekeeper** - Seguridad para Agentes de IA

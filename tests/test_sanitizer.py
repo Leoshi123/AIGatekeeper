@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Tests Unitarios
+🛡️ AG-Wrapper - Tests Unitarios
 
 Tests para el sanitizer de metadatos.
 """

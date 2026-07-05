@@ -1,0 +1,45 @@
+# AG-Wrapper Configuration
+# Crea este archivo en la raiz de tu proyecto para personalizar el wrapper.
+# Los valores por defecto se usan si no existe ag.yaml.
+version: "1.0"
+
+wrapper:
+  sanitize_input: true
+  sanitize_output: true
+  prune_context: false
+  block_critical: true
+  # agent_command: "claude"
+
+detector:
+  severity_threshold: "high"  # low | medium | high | critical
+  # custom_patterns:
+  #   - pattern: "my_secret_\\w+"
+  #     severity: "critical"
+  #     description: "Custom secret pattern"
+  #     language: "python"
+
+sanitizer:
+  remove_comments: true
+  remove_paths: true
+  preserve_shebang: true
+  preserve_copyright: false
+
+watch:
+  extensions:
+    - .py
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .go
+    - .rs
+  exclude_dirs:
+    - .git
+    - node_modules
+    - __pycache__
+    - .venv
+    - venv
+    - build
+    - dist
+  block_on_scan: false
+  quiet: false

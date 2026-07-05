@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - AI Agent Wrapper
+🛡️ AG-Wrapper - AI Agent Wrapper
 
 Wrapper que envuelve llamadas a agentes de IA aplicando:
 1. Sanitización de input (limpiar contexto antes de enviar)
@@ -24,7 +24,11 @@ from src.detector import LegacyShield, Severity
 
 @dataclass
 class WrapperConfig:
-    """Configuración del wrapper."""
+    """Configuración del wrapper.
+
+    Valores por defecto sensatos. Se puede cargar desde ``ag.yaml``
+    con :meth:`from_yaml`.
+    """
 
     sanitize_input: bool = True
     sanitize_output: bool = True
@@ -32,6 +36,22 @@ class WrapperConfig:
     block_critical: bool = True
     agent_command: str = "claude"  # Comando por defecto
     context_file: Optional[str] = None  # Archivo de contexto para podar
+
+    @classmethod
+    def from_yaml(cls, path: Optional[str] = None) -> "WrapperConfig":
+        """Load config from ``ag.yaml``, merging with defaults.
+
+        If *path* is ``None``, walks up from CWD looking for ``ag.yaml``.
+        If no file is found, returns default config.
+        """
+        from src.config.yaml_config import YamlConfig
+
+        ag_cfg = YamlConfig.find_and_load(path) if path is None else YamlConfig.load(path)
+        overrides = ag_cfg.build_wrapper_config()
+        # Apply only known fields (ignore extra keys)
+        known = {k for k in cls.__dataclass_fields__}
+        merged = {k: v for k, v in overrides.items() if k in known}
+        return cls(**merged)
 
 
 @dataclass
@@ -132,7 +152,7 @@ Tarea del usuario:
             if self.detector.block_critical(issues):
                 blocked = True
                 stdout = self._generate_blocked_message(issues)
-                stderr += f"\n[ZTC-Wrapper] BLOQUEADO: {security_issues} problemas de seguridad críticos encontrados"
+                stderr += f"\n[AG-Wrapper] BLOQUEADO: {security_issues} problemas de seguridad críticos encontrados"
                 returncode = 1
 
         return WrapperResult(
@@ -228,7 +248,7 @@ Tarea del usuario:
         """Genera mensaje cuando se bloquea por seguridad."""
         lines = [
             "=" * 50,
-            "⚠️  ZTC-Wrapper: Output BLOQUEADO por seguridad",
+            "⚠️  AG-Wrapper: Output BLOQUEADO por seguridad",
             "=" * 50,
             "",
             f"Se detectaron {len(issues)} problemas críticos:",
@@ -291,7 +311,7 @@ if __name__ == "__main__":
     # Demo
     wrapper = AIAgentWrapper()
 
-    print("=== 🛡️ ZTC-Wrapper AI Demo ===\n")
+    print("=== 🛡️ AG-Wrapper AI Demo ===\n")
 
     # Verificar agentes disponibles
     print("Agentes disponibles:")

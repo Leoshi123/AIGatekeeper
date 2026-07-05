@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Tests del Wrapper
+🛡️ AG-Wrapper - Tests del Wrapper
 
 Tests para el AI Agent Wrapper.
 """

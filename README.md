@@ -1,4 +1,4 @@
-# 🛡️ AIGatekeeper (Agente de Confianza Cero)
+# 🛡️ AIGatekeeper
 
 [![Tests](https://github.com/Leoshi123/AIGatekeeper/actions/workflows/ci.yml/badge.svg)](https://github.com/Leoshi123/AIGatekeeper/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/Leoshi123/AIGatekeeper/branch/main/graph/badge.svg)](https://codecov.io/gh/Leoshi123/AIGatekeeper)
@@ -44,22 +44,19 @@ Alias corto: `ag` en vez de `aigatekeeper`
 
 ---
 
-## 🚀 v2.0.0 — C++ Native Core Engine
+## 🚀 v2.1.0 — Wrapper Release (Actual)
 
-> ⚡ **¡El core ahora corre en C++17 nativo!** Motor regex **re2** (Google) — seguro contra ReDoS, hasta 10x más rápido.
+> 👀 **File Watcher + Config YAML + CLI wrap** — el wrapper ahora es un producto completo.
 
 ### Novedades en esta versión
 
 | Feature | Descripción |
 |---------|-------------|
-| ⚡ **Motor C++ nativo** | MetadataSanitizer, LegacyShield y PromptInjectDetector corren en C++17 con pybind11 |
-| 🔒 **re2 seguro** | Google Regex engine — protegido contra ReDoS por diseño |
-| 🔄 **Fallback automático** | Si el módulo nativo no está disponible, usa Python puro sin cambios |
-| 🏗️ **scikit-build-core** | Compilación C++ automática con `pip install` |
-| 🧹 **Magic comments** | `# ag: ignore` / `// ag: ignore` para excluir líneas del escaneo |
-| 🔍 **Filtros por lenguaje** | `LegacyShield(languages=['go'])` para escaneos específicos |
-| 🆕 **has_high_severity()** | Nueva API estática en PromptInjectDetector |
-| 🆕 **get_summary()** | Resumen estructurado en ambos detectores |
+| 👀 **File Watcher** | `ag watch [path]` — escaneo en tiempo real con watchdog |
+| ⚙️ **Config YAML** | `ag.yaml` en la raíz del proyecto para personalizar reglas |
+| 🚀 **CLI wrap** | `ag wrap "prompt"` — pipeline completo de seguridad para agentes IA |
+| 📋 **Config commands** | `ag config show` / `ag config init` |
+| 🧹 **Rebranding completo** | Sin rastros de ZTC — todo consistente como AG-Wrapper |
 
 ### Comandos del CLI
 
@@ -75,6 +72,9 @@ Commands:
   sanitize     Limpiador de metadata
   prune        Podador de contexto AST
   hooks        Git hooks de seguridad
+  wrap         Pipeline completo para agentes IA
+  watch        File watcher en tiempo real
+  config       Configuración (ag.yaml)
   demo         Demo completa
 ```
 
@@ -157,6 +157,48 @@ uv pip install -e .
 ```bash
 aigatekeeper --version
 ag --help
+```
+
+### Uso rápido del wrapper
+
+```bash
+# Pipeline completo de seguridad para tu agente IA
+ag wrap "Hazme una API REST en FastAPI"
+
+# Con agente específico
+ag wrap --agent opencode "Refactoriza este módulo"
+
+# Desde stdin
+cat prompt.txt | ag wrap --stdin
+
+# Cargando configuración personalizada
+ag wrap --config ag.yaml "Genera código seguro"
+```
+
+### File Watcher (tiempo real)
+
+```bash
+# Vigilar directorio actual
+ag watch
+
+# Directorio específico
+ag watch ./src
+
+# Modo silencioso (solo problemas)
+ag watch --quiet
+
+# Con configuración personalizada
+ag watch --config ag.yaml
+```
+
+### Configuración YAML
+
+```bash
+# Ver configuración activa
+ag config show
+
+# Crear ag.yaml con valores por defecto
+ag config init
 ```
 
 ---
@@ -287,6 +329,7 @@ AIGatekeeper/
 │   ├── bindings/pyag.cpp   # pybind11 module → pyagcore
 │   ├── tests/test_core.cpp # 38 tests C++
 │   └── build.sh            # Build script: release|debug|test|clean|all
+├── ag.yaml                 # Configuración YAML del wrapper
 ├── install.sh              # curl | bash installer
 ├── install.ps1             # Windows installer
 ├── server.py               # Web Dashboard
@@ -298,6 +341,12 @@ AIGatekeeper/
 │   │   ├── code-review.md
 │   │   ├── tdd-mode.md
 │   │   └── refactor-mode.md
+│   ├── config/             # Configuración (ag.yaml + legacy .agrc)
+│   │   ├── __init__.py
+│   │   ├── legacy_config.py
+│   │   ├── yaml_config.py
+│   │   └── secrets.py
+│   ├── watcher.py          # File Watcher (watchdog)
 │   ├── mcp_server.py       # MCP Server
 │   ├── detector/
 │   │   ├── __init__.py     # Wrapper con fallback: C++ nativo → Python puro
@@ -308,7 +357,9 @@ AIGatekeeper/
 │   │   ├── __init__.py     # Wrapper con fallback: C++ nativo → Python puro
 │   │   └── metadata_cleaner.py    # Sanitizer (fallback Python)
 │   ├── ast_parser/         # Context pruner (AST-based code pruning)
-│   └── wrapper/            # AI Agent Wrapper
+│   ├── wrapper/            # AI Agent Wrapper
+│   │   ├── __init__.py
+│   │   └── agent_wrapper.py
 ├── tests/
 │   ├── test_detector.py           # 60+ tests LegacyShield
 │   ├── test_injection_detector.py # 15 tests PromptInjectDetector
@@ -348,8 +399,6 @@ Crea `.aigatekeeper/config.json`:
 
 ## 🗺️ Roadmap
 
-### C++ Native Core — ¡YA DISPONIBLE!
-
 | Versión | Estado | Feature |
 |---------|:------:|---------|
 | **v1.0.0** | ✅ | Release inicial |
@@ -357,9 +406,9 @@ Crea `.aigatekeeper/config.json`:
 | **v1.0.2** | ✅ | MCP Resilience + Indestructible Server |
 | **v1.0.3** | ✅ | Web Dashboard |
 | **v1.0.5** | ✅ | Adversarial Testing |
-| **v1.1.0** | ✅ | **CLI Productivo + Prompt Injection** |
-| **v2.0.0** | 🚀 | **Migración Core a C/C++** (actual) |
-| **v2.1.0** | 📅 | Bindings: Python, Node.js, Go |
+| **v1.1.0** | ✅ | CLI Productivo + Prompt Injection |
+| **v2.0.0** | ✅ | Migración Core a C/C++ nativo |
+| **v2.1.0** | 🚀 | **Wrapper Release: watcher, YAML config, wrap CLI** (actual) |
 | **v3.0.0** | 📅 | Engine de ML para detección avanzada |
 
 ### Arquitectura v2.0.0
@@ -419,16 +468,6 @@ python automate_mcp.py --name "NombreServidor" --tool "nombre_herramienta" --des
 ```
 
 Esto utilizará las plantillas ubicadas en `templates/` para asegurar que el nuevo MCP siga los estándares de seguridad y estructura del proyecto.
-
----
-
-## 📋 Roadmap
-
-| Versión | Feature |
-|---------|---------|
-| v1.0.0 | Initial release |
-| v1.0.1 | **Multi-language (Go, Rust, Java, C/C++) + Multi-OS scripts + MCP Server** |
-| v1.0.2 | **MCP Server stabilization & test automation (Indestructible Server)** |
 
 ---
 

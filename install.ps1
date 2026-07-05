@@ -32,8 +32,8 @@ function Write-Error-Custom {
 function Print-Banner {
     Write-Host ""
     Write-Host "==========================================" -ForegroundColor $BLUE
-    Write-Host "  ZTC-Wrapper Installation Script" -ForegroundColor $BLUE
-    Write-Host "  Zero-Trust AI Agent Security" -ForegroundColor $BLUE
+    Write-Host "  AG-Wrapper Installation Script" -ForegroundColor $BLUE
+    Write-Host "  AI Gatekeeper Security" -ForegroundColor $BLUE
     Write-Host "==========================================" -ForegroundColor $BLUE
     Write-Host ""
 }
