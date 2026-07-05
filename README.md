@@ -409,7 +409,8 @@ Crea `.aigatekeeper/config.json`:
 | **v1.1.0** | ✅ | CLI Productivo + Prompt Injection |
 | **v2.0.0** | ✅ | Migración Core a C/C++ nativo |
 | **v2.1.0** | 🚀 | **Wrapper Release: watcher, YAML config, wrap CLI** (actual) |
-| **v3.0.0** | 📅 | Engine de ML para detección avanzada |
+| **v3.0.0** | 📅 | **Más lenguajes backend: Ruby, Kotlin, C#, Swift, Scala + patrones** |
+| **v3.1.0** | 📅 | Engine de ML para detección avanzada |
 
 ### Arquitectura v2.0.0
 
