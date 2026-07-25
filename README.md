@@ -44,19 +44,19 @@ Alias corto: `ag` en vez de `aigatekeeper`
 
 ---
 
-## 🚀 v2.1.0 — Wrapper Release (Actual)
+## 🚀 v3.0.0 — Multi-Language Backend (Actual)
 
-> 👀 **File Watcher + Config YAML + CLI wrap** — el wrapper ahora es un producto completo.
+> 🌐 **16 lenguajes backend** con detección de zombie code + Language Registry centralizado.
 
 ### Novedades en esta versión
 
 | Feature | Descripción |
 |---------|-------------|
-| 👀 **File Watcher** | `ag watch [path]` — escaneo en tiempo real con watchdog |
-| ⚙️ **Config YAML** | `ag.yaml` en la raíz del proyecto para personalizar reglas |
-| 🚀 **CLI wrap** | `ag wrap "prompt"` — pipeline completo de seguridad para agentes IA |
-| 📋 **Config commands** | `ag config show` / `ag config init` |
-| 🧹 **Rebranding completo** | Sin rastros de ZTC — todo consistente como AG-Wrapper |
+| 🆕 **5 nuevos lenguajes** | Ruby, Kotlin, C#, Swift, Scala con patrones de detección |
+| 🏗️ **Language Registry** | `src/languages.py` — source of truth centralizado en 7 archivos |
+| ⚡ **Patrones C++ nativos** | 34 nuevos patrones en scanner.cpp para pyagcore |
+| 🛡️ **Self-scan Protection** | Exclusión automática de archivos de patrones (falsos positivos -88%) |
+| 🧪 **68 nuevas reglas** | 34 Python + 34 C++ patrones de detección |
 
 ### Comandos del CLI
 
@@ -86,7 +86,7 @@ Commands:
 |------|------------|
 | 🧹 **Metadata Cleaner** | Elimina comentarios de IA, rutas absolutas, firmas de modelos |
 | 🔑 **Secret Detector** | Bloquea API keys, tokens, credenciales |
-| ⚠️ **Zombie Code Detector** | Detecta 55+ patrones vulnerables en 9 lenguajes |
+| ⚠️ **Zombie Code Detector** | Detecta 130+ patrones vulnerables en 16 lenguajes |
 | 🎭 **Prompt Injection Detector** | 4 vectores: direct, indirect, jailbreak, role-play |
 | 🪝 **Git Hooks** | Escaneo automático en cada commit/push |
 | 🤖 **MCP Server** | Integración nativa con Claude Code, Cursor, OpenCode, Windsurf |
@@ -105,6 +105,11 @@ Commands:
 | 🔧 C/C++ | 4 | ✅ | - |
 | 🐘 PHP | 15+ | ✅ | - |
 | ⚛️ React 19 | 10+ | ✅ | - |
+| 💎 Ruby | 8 | ✅ | - |
+| 🟣 Kotlin | 6 | ✅ | - |
+| 🟢 C# | 8 | ✅ | - |
+| 🍎 Swift | 5 | ✅ | - |
+| 🔷 Scala | 7 | ✅ | - |
 
 ---
 
@@ -324,10 +329,10 @@ AIGatekeeper/
 │   ├── include/            # Headers públicos (sanitizer.h, scanner.h, injection.h)
 │   ├── src/                # Implementaciones C++ con re2 + PIMPL
 │   │   ├── sanitizer.cpp   # MetadataSanitizer (12 patrones)
-│   │   ├── scanner.cpp     # LegacyShield (55+ patrones, 9 lenguajes)
+│   │   ├── scanner.cpp     # LegacyShield (130+ patrones, 16 lenguajes)
 │   │   └── injection.cpp   # PromptInjectDetector (14 patrones, 4 categorías)
 │   ├── bindings/pyag.cpp   # pybind11 module → pyagcore
-│   ├── tests/test_core.cpp # 38 tests C++
+│   ├── tests/test_core.cpp # 50 tests C++
 │   └── build.sh            # Build script: release|debug|test|clean|all
 ├── ag.yaml                 # Configuración YAML del wrapper
 ├── install.sh              # curl | bash installer
@@ -346,6 +351,7 @@ AIGatekeeper/
 │   │   ├── legacy_config.py
 │   │   ├── yaml_config.py
 │   │   └── secrets.py
+│   ├── languages.py        # Language Registry — source of truth centralizado
 │   ├── watcher.py          # File Watcher (watchdog)
 │   ├── mcp_server.py       # MCP Server
 │   ├── detector/
@@ -361,9 +367,10 @@ AIGatekeeper/
 │   │   ├── __init__.py
 │   │   └── agent_wrapper.py
 ├── tests/
-│   ├── test_detector.py           # 60+ tests LegacyShield
+│   ├── test_detector.py           # 99 tests LegacyShield
 │   ├── test_injection_detector.py # 15 tests PromptInjectDetector
 │   ├── test_sanitizer.py          # 9 tests MetadataSanitizer
+│   ├── test_languages.py          # 25 tests Language Registry
 │   └── ...                        # wrapper, ast, mcp, adversarial tests
 └── .aigatekeeper/          # Creado por `aigatekeeper init`
     └── config.json
@@ -408,16 +415,19 @@ Crea `.aigatekeeper/config.json`:
 | **v1.0.5** | ✅ | Adversarial Testing |
 | **v1.1.0** | ✅ | CLI Productivo + Prompt Injection |
 | **v2.0.0** | ✅ | Migración Core a C/C++ nativo |
-| **v2.1.0** | 🚀 | **Wrapper Release: watcher, YAML config, wrap CLI** (actual) |
-| **v3.0.0** | 📅 | **Más lenguajes backend: Ruby, Kotlin, C#, Swift, Scala + patrones** |
+| **v2.1.0** | ✅ | Wrapper Release: watcher, YAML config, wrap CLI |
+| **v3.0.0** | 🚀 | **Multi-Language Backend: 16 lenguajes, 130+ patrones** (actual) |
 | **v3.1.0** | 📅 | Engine de ML para detección avanzada |
 
-### Arquitectura v2.0.0
+### Arquitectura v3.0.0
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
 │                    CLI Layer (Python)                          │
 │   aigatekeeper init | prompt | scan-prompt | push              │
+├───────────────────────────────────────────────────────────────┤
+│                    Language Registry (src/languages.py)        │
+│   16 lenguajes • extensions sync • detect_language()           │
 ├───────────────────────────────────────────────────────────────┤
 │                    MCP Server + Web Dashboard                  │
 ├───────────────────────────────────────────────────────────────┤
@@ -427,7 +437,7 @@ Crea `.aigatekeeper/config.json`:
 │                    Native Core (C++17 + pybind11)              │
 │  ┌────────────────┐ ┌────────────────┐ ┌──────────────────┐   │
 │  │   LegacyShield │ │ MetadataSanit  │ │ PromptInjectDet  │   │
-│  │   (re2, 55+)   │ │ (re2, 12 pat) │ │ (re2, 14 pat)   │   │
+│  │  (re2, 130+)   │ │ (re2, 12 pat) │ │ (re2, 14 pat)   │   │
 │  └────────────────┘ └────────────────┘ └──────────────────┘   │
 ├───────────────────────────────────────────────────────────────┤
 │                    Pure Python Fallback                        │
