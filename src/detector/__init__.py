@@ -193,19 +193,20 @@ class LegacyShield:
         return summary
 
     @staticmethod
-    def scan_directory(directory, extensions=None, project_path=None):
+    def scan_directory(directory, extensions=None, project_path=None, skip_files=None):
         """
         Escanea todos los archivos en un directorio.
 
         Args:
             directory: Directorio a escanear.
             extensions: Extensiones de archivo a incluir.
-            project_path: Ruta al proyecto (para cargar config).
+            project_path: Ruta del proyecto (para cargar config).
+            skip_files: Nombres de archivo a excluir (default: SELF_EXCLUDE_FILES).
 
         Returns:
             Dict[str, List[DetectionResult]]: {file_path: [results]}
         """
-        return py_scan_directory(directory, extensions, project_path)
+        return py_scan_directory(directory, extensions, project_path, skip_files)
 
     # --- Métodos adicionales de la implementación Python pura ---
 
@@ -368,18 +369,19 @@ class PromptInjectDetector:
 # ============================================================================
 
 # Conveniencia: función scan_directory independiente
-def scan_directory(directory, extensions=None, project_path=None):
+def scan_directory(directory, extensions=None, project_path=None, skip_files=None):
     """Escanea todos los archivos en un directorio.
 
     Args:
         directory: Directorio a escanear.
         extensions: Extensiones de archivo a incluir.
         project_path: Ruta al proyecto para cargar configuración.
+        skip_files: Nombres de archivo a excluir (default: SELF_EXCLUDE_FILES).
 
     Returns:
         Dict {file_path: [results]}
     """
-    return py_scan_directory(directory, extensions, project_path)
+    return py_scan_directory(directory, extensions, project_path, skip_files)
 
 
 __all__ = [

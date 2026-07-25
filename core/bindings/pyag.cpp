@@ -158,10 +158,12 @@ PYBIND11_MODULE(pyagcore, m) {
         .def("scan_code",      &ag::LegacyShield::scan_code,
              py::arg("code"), py::arg("file_path") = "<inline>")
         .def("scan_file",      &ag::LegacyShield::scan_file, py::arg("file_path"))
+        // NOTE: Keep extensions in sync with src/languages.py (single source of truth).
         .def_static("scan_directory",    &ag::LegacyShield::scan_directory,
              py::arg("directory"),
              py::arg("extensions") = std::vector<std::string>{
-                ".py", ".js", ".ts", ".jsx", ".tsx", ".go", ".rs", ".java", ".c", ".cpp", ".php"
+                ".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".c", ".cpp", ".cc", ".cxx", ".h", ".hpp", ".php",
+                ".rb", ".kt", ".kts", ".cs", ".swift", ".scala"
              })
         .def_static("block_critical",    &ag::LegacyShield::block_critical,
              py::arg("results"))

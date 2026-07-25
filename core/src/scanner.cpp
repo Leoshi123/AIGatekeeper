@@ -193,6 +193,99 @@ const ZP ZOMBIE_PATTERNS[] = {
        "Validar y sanitizar input de usuario antes de leer archivos", "php"},
 
     // ========================================================================
+    // RUBY
+    // ========================================================================
+    ZP{R"(\beval\s*\()",                     S::CRITICAL, "eval() en Ruby ejecuta código arbitrario",
+       "Usar whitelist de métodos o evitar eval completamente", "ruby"},
+    ZP{R"(\bsystem\s*\()",                   S::CRITICAL, "system() ejecuta comandos del shell",
+       "Usar Open3 o Kernel#spawn con argumentos separados", "ruby"},
+    ZP{R"(\bexec\s*\()",                     S::CRITICAL, "exec() reemplaza el proceso actual con un comando",
+       "Usar Process.spawn o Open3 con argumentos seguros", "ruby"},
+    ZP{R"(\bsend\s*\()",                     S::HIGH, "send() invoca métodos dinámicamente — puede ser abusado",
+       "Usar case/when o hash de métodos con whitelist", "ruby"},
+    ZP{R"(\b(instance_eval|class_eval|module_eval)\s*[\(\{])", S::HIGH,
+       "eval dinámico en contexto de objeto/clase permite ejecución arbitraria",
+       "Usar mixins o módulos con métodos explícitos", "ruby"},
+    ZP{R"(Kernel\.open\s*\()",               S::HIGH, "Kernel.open con pipes ejecuta comandos del shell",
+       "Usar File.open para archivos o URI.open para URLs", "ruby"},
+    ZP{R"(Marshal\.load\s*\()",              S::HIGH, "Marshal.load puede ejecutar código arbitrario en deserialización",
+       "Usar JSON.parse o serialización segura con whitelist", "ruby"},
+    ZP{R"(YAML\.load\s*\()",                 S::HIGH, "YAML.load sin safe_load es vulnerable a deserialización",
+       "Usar YAML.safe_load o Psych.safe_load", "ruby"},
+
+    // ========================================================================
+    // KOTLIN
+    // ========================================================================
+    ZP{R"(Runtime\.getRuntime\s*\(\)\.exec\s*\()", S::CRITICAL,
+       "Runtime.exec() permite ejecución de comandos del sistema",
+       "Usar ProcessBuilder con argumentos separados", "kotlin"},
+    ZP{R"(\bProcessBuilder\s*\()",            S::MEDIUM, "ProcessBuilder puede ejecutar comandos si recibe input no validado",
+       "Validar y sanitizar argumentos antes de usar ProcessBuilder", "kotlin"},
+    ZP{R"(\beval\s*\()",                     S::CRITICAL, "eval() en Kotlin/JS ejecuta código arbitrario",
+       "Usar parsing seguro o funciones específicas", "kotlin"},
+    ZP{R"(\bTODO\s*\(\s*\))",                S::LOW, "TODO() indica código incompleto — puede causar runtime exceptions",
+       "Implementar la funcionalidad o lanzar UnsupportedOperationException explícita", "kotlin"},
+    ZP{R"(Class\.forName\s*\()",              S::HIGH, "Class.forName carga clases dinámicamente — potencial code injection",
+       "Usar referencia directa de clase o inyección de dependencias", "kotlin"},
+    ZP{R"(sun\.misc\.Unsafe)",                S::CRITICAL, "Unsafe permite operaciones de memoria no seguras",
+       "Usar API estándar de Kotlin/Java sin acceso directo a memoria", "kotlin"},
+
+    // ========================================================================
+    // C#
+    // ========================================================================
+    ZP{R"(Process\.Start\s*\()",             S::HIGH, "Process.Start ejecuta procesos del sistema",
+       "Usar argumentos sanitizados y validar nombre de archivo", "csharp"},
+    ZP{R"(Assembly\.Load\s*\()",              S::HIGH, "Assembly.Load carga ensamblados dinámicamente — potencial code injection",
+       "Usar referencias estáticas o Plugin architecture con validación", "csharp"},
+    ZP{R"(\.ExecuteNonQuery\s*\([^)]*\+|\.ExecuteReader\s*\([^)]*\+|\.ExecuteScalar\s*\([^)]*\+)",
+       S::CRITICAL, "SQL injection vía concatenación en SqlCommand",
+       "Usar parámetros: SqlCommand con Parameters.Add", "csharp"},
+    ZP{R"(\beval\s*\()",                      S::CRITICAL, "eval() en C# ejecuta código arbitrario",
+       "Usar parsing seguro o compilación restringida", "csharp"},
+    ZP{R"(BinaryFormatter\s*\()",             S::CRITICAL, "BinaryFormatter es vulnerable a deserialización de objetos maliciosos",
+       "Usar System.Text.Json o XML serialization con Tipos conocidos", "csharp"},
+    ZP{R"(XmlDocument\s*\()",                 S::MEDIUM, "XmlDocument puede ser vulnerable a XXE",
+       "Usar XmlReader con DTD processing deshabilitado", "csharp"},
+    ZP{R"(Response\.Write\s*\()",             S::MEDIUM, "Response.Write sin encoding puede causar XSS",
+       "Usar HtmlEncode o framework anti-XSS", "csharp"},
+    ZP{R"(Thread\.Sleep\s*\()",               S::LOW, "Thread.Sleep bloquea el thread — uso frecuente indica diseño cuestionable",
+       "Usar async/await, Task.Delay o patrones reactivos", "csharp"},
+
+    // ========================================================================
+    // SWIFT
+    // ========================================================================
+    ZP{R"(Process\s*\(\s*\))",                S::HIGH, "Process() puede ejecutar comandos del sistema en Swift",
+       "Usar Process con argumentos validados y sanitized", "swift"},
+    ZP{R"(unsafeBitCast\s*\()",               S::HIGH, "unsafeBitCast permite casteo de memoria no seguro",
+       "Usar Optional binding o protocolos para casteo seguro", "swift"},
+    ZP{R"(\bdlopen\s*\()",                    S::HIGH, "dlopen carga bibliotecas dinámicamente — potencial code injection",
+       "Usar Frameworks estáticos o Swift Package Manager", "swift"},
+    ZP{R"(UnsafePointer|UnsafeMutablePointer|UnsafeRawPointer)", S::MEDIUM,
+       "Punteros inseguros eliminan las garantías de memoria de Swift",
+       "Usar tipos seguros de Swift (Array, Data, ContiguousArray)", "swift"},
+    ZP{R"(as!\s*\w+)",                        S::MEDIUM, "Force cast (as!) causa fatal error si el casteo falla",
+       "Usar optional cast (as?) con manejo de error", "swift"},
+
+    // ========================================================================
+    // SCALA
+    // ========================================================================
+    ZP{R"(sys\.process\._)",                  S::HIGH, "sys.process permite ejecutar comandos del shell",
+       "Usar ProcessBuilder con argumentos validados", "scala"},
+    ZP{R"(Class\.forName\s*\()",              S::HIGH, "Class.forName carga clases dinámicamente — potencial code injection",
+       "Usar referencias directas de clase o DI framework", "scala"},
+    ZP{R"(Runtime\.getRuntime\s*\(\)\.exec\s*\()", S::CRITICAL,
+       "Runtime.exec() permite ejecución de comandos del sistema",
+       "Usar ProcessBuilder con argumentos separados", "scala"},
+    ZP{R"(\.asInstanceOf\s*\[)",             S::MEDIUM, "asInstanceOf es un casteo forzado — causa ClassCastException",
+       "Usar pattern matching o Option con isinstanceOf", "scala"},
+    ZP{R"(:\s*Null\b|= Null\b|<:\s*Null\b)", S::MEDIUM, "Uso de tipo Null es propenso a NullPointerExceptions",
+       "Usar Option[T] para representar valores ausentes", "scala"},
+    ZP{R"(\bvar\s+\w+\s*[=:])",              S::LOW, "Uso de var (mutabilidad) puede causar bugs en concurrencia",
+       "Usar val (inmutabilidad) cuando sea posible", "scala"},
+    ZP{R"(Thread\.sleep\s*\()",               S::LOW, "Thread.Sleep bloquea el thread — uso frecuente indica diseño cuestionable",
+       "Usar Future, Akka, o patrones reactivos", "scala"},
+
+    // ========================================================================
     // GENERAL (multi-lenguaje)
     // ========================================================================
     ZP{R"(password\s*=\s*["\'][^"\']+["\'])",  S::CRITICAL, "Password hardcodeada en el código",

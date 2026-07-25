@@ -214,7 +214,7 @@ def scan_directory(
 
     Args:
         directory: Path to the directory to scan.
-        extensions: File extensions to include (default: .py, .js, .ts, .jsx, .tsx, .go, .rs, .java, .c, .cpp, .php).
+        extensions: File extensions to include (default: all supported via src/languages.py).
 
     Returns:
         JSON string with per-file findings and global summary.
@@ -222,19 +222,7 @@ def scan_directory(
     if not os.path.isdir(directory):
         return json.dumps({"error": f"Directory not found: {directory}"}, indent=2)
 
-    exts = extensions or [
-        ".py",
-        ".js",
-        ".ts",
-        ".jsx",
-        ".tsx",
-        ".go",
-        ".rs",
-        ".java",
-        ".c",
-        ".cpp",
-        ".php",
-    ]
+    exts = extensions or None  # None triggers DEFAULT_EXTENSIONS in scan_directory
 
     project_path = _find_project_root(directory)
     results = scan_dir_fn(directory, exts, project_path=project_path)

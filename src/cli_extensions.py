@@ -343,7 +343,7 @@ def register_commands(cli_group):
 
             # Zombie code scan
             if settings.get("zombie_code_enabled", True):
-                results = scan_directory(".", [".py", ".js", ".ts", ".jsx", ".tsx"])
+                results = scan_directory(".")
                 total = sum(len(r) for r in results.values()) if results else 0
                 if total > 0:
                     click.echo(f"⚠️  Zombie code: {total} problemas")

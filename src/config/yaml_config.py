@@ -19,8 +19,7 @@ import yaml
 
 
 # ── defaults ──────────────────────────────────────────────────────────────────
-
-_DEFAULT_EXTENSIONS = [".py", ".js", ".ts", ".jsx", ".tsx", ".go", ".rs"]
+from src.languages import DEFAULT_EXTENSIONS as _DEFAULT_EXTENSIONS
 _DEFAULT_EXCLUDE_DIRS = [
     ".git",
     "node_modules",

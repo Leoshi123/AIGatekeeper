@@ -377,7 +377,7 @@ def scan(file_path: str, block: bool):
 def scan_dir(directory: str, extensions: tuple):
     """Escanea todos los archivos en un directorio."""
 
-    exts = list(extensions) if extensions else [".py", ".js", ".ts", ".jsx", ".tsx"]
+    exts = list(extensions) if extensions else None
 
     # Detectar proyecto raíz desde el directorio
     project_path = get_project_root_from_file(directory)

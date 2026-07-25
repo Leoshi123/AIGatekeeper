@@ -116,10 +116,12 @@ public:
     std::vector<DetectionResult> scan_file(const std::string& file_path) const;
 
     /// Escanea un directorio recursivamente.
+    /// NOTE: Keep extensions in sync with src/languages.py (single source of truth).
     static std::map<std::string, std::vector<DetectionResult>> scan_directory(
         const std::string& directory,
         const std::vector<std::string>& extensions = {
-            ".py", ".js", ".ts", ".jsx", ".tsx", ".go", ".rs", ".java", ".c", ".cpp", ".php"
+            ".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".c", ".cpp", ".cc", ".cxx", ".h", ".hpp", ".php",
+            ".rb", ".kt", ".kts", ".cs", ".swift", ".scala"
         }
     );
 

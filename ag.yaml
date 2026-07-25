@@ -1,6 +1,7 @@
 # AG-Wrapper Configuration
 # Crea este archivo en la raiz de tu proyecto para personalizar el wrapper.
 # Los valores por defecto se usan si no existe ag.yaml.
+# Extensions must stay in sync with src/languages.py (single source of truth).
 version: "1.0"
 
 wrapper:
@@ -29,10 +30,25 @@ watch:
     - .py
     - .js
     - .ts
-    - .jsx
     - .tsx
+    - .jsx
     - .go
     - .rs
+    - .java
+    - .c
+    - .cpp
+    - .cc
+    - .cxx
+    - .h
+    - .hpp
+    - .php
+    # v3.0.0 languages
+    - .rb
+    - .kt
+    - .kts
+    - .cs
+    - .swift
+    - .scala
   exclude_dirs:
     - .git
     - node_modules
