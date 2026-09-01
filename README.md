@@ -44,7 +44,28 @@ Alias corto: `ag` en vez de `aigatekeeper`
 
 ---
 
-## 🚀 v3.0.0 — Multi-Language Backend (Actual)
+## 🚀 v3.0.1 — Versioning Unificado + update_check (Actual)
+
+> 🛡️ **Detección de versiones antiguas**: `update_check` avisa a instalaciones desactualizadas (v1.x/v2.x → v3.x). Versión unificada a una única fuente.
+
+### Novedades en esta versión
+
+| Feature | Descripción |
+|---------|-------------|
+| 🆕 **update_check MCP tool** | Lee primero la versión local, consulta Releases de GitHub, avisa si hay actualización |
+| 🔗 **Versión unificada (DRY)** | `src/__init__.py` es la única fuente; CLI, MCP server y plugin leen de ahí (antes 4 números inconsistentes) |
+| 🧪 **16 tests nuevos** | Suite completa: **199/199 tests verdes** |
+| 🧩 **MCP Plugin portable** | `src/mcp_plugin/` reutilizable como módulo, con update_check incluido |
+| 🐛 **Fix portabilidad** | Encoding UTF-8 en tests de C++ (funciona en Windows/macOS/Linux) |
+
+```bash
+# Verificar si tu instalación está al día
+# (via MCP) ag update_check → "Estás en v3.0.1, la última es 3.0.1"
+```
+
+---
+
+## 🚀 v3.0.0 — Multi-Language Backend
 
 > 🌐 **16 lenguajes backend** con detección de zombie code + Language Registry centralizado.
 
@@ -278,6 +299,7 @@ Exponé AIGatekeeper a cualquier agente compatible con MCP.
 | `scan_prompt` | Detecta prompt injection |
 | `prune_context` | Extrae contexto mínimo via AST |
 | `clean_code` | Limpieza rápida de metadata |
+| `update_check` | 🔔 Detecta si tu instalación está desactualizada (v1.x/v2.x → v3.x) |
 
 ### Configuración en OpenCode
 
@@ -353,7 +375,12 @@ AIGatekeeper/
 │   │   └── secrets.py
 │   ├── languages.py        # Language Registry — source of truth centralizado
 │   ├── watcher.py          # File Watcher (watchdog)
+│   ├── version_check.py    # update_check — detección de versiones antiguas
 │   ├── mcp_server.py       # MCP Server
+│   ├── mcp_plugin/         # MCP Plugin portable (update_check incluido)
+│   │   ├── __init__.py
+│   │   ├── core.py
+│   │   └── tools.py
 │   ├── detector/
 │   │   ├── __init__.py     # Wrapper con fallback: C++ nativo → Python puro
 │   │   ├── zombie_detector.py     # LegacyShield (fallback Python)
@@ -371,6 +398,7 @@ AIGatekeeper/
 │   ├── test_injection_detector.py # 15 tests PromptInjectDetector
 │   ├── test_sanitizer.py          # 9 tests MetadataSanitizer
 │   ├── test_languages.py          # 25 tests Language Registry
+│   ├── test_version_check.py      # 16 tests update_check
 │   └── ...                        # wrapper, ast, mcp, adversarial tests
 └── .aigatekeeper/          # Creado por `aigatekeeper init`
     └── config.json
@@ -416,7 +444,8 @@ Crea `.aigatekeeper/config.json`:
 | **v1.1.0** | ✅ | CLI Productivo + Prompt Injection |
 | **v2.0.0** | ✅ | Migración Core a C/C++ nativo |
 | **v2.1.0** | ✅ | Wrapper Release: watcher, YAML config, wrap CLI |
-| **v3.0.0** | 🚀 | **Multi-Language Backend: 16 lenguajes, 130+ patrones** (actual) |
+| **v3.0.0** | ✅ | **Multi-Language Backend: 16 lenguajes, 130+ patrones** |
+| **v3.0.1** | 🚀 | **Versioning unificado + update_check MCP tool** (actual) |
 | **v3.1.0** | 📅 | Engine de ML para detección avanzada |
 
 ### Arquitectura v3.0.0

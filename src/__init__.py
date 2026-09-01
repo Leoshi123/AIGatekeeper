@@ -9,7 +9,7 @@ Middleware de seguridad para agentes de IA:
 - AI Agent Wrapper
 """
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 __author__ = "Leoshi"
 __license__ = "MIT"
 

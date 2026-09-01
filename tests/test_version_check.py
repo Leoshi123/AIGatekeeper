@@ -56,15 +56,21 @@ class TestCompareVersions:
 
 class TestCheckForUpdates:
     def test_local_version_es_fuente_canonica(self):
-        assert get_local_version() == "3.0.0"
+        from src import __version__
+        # La versión local SIEMPRE es la fuente canónica (src/__init__.py)
+        assert get_local_version() == __version__
 
     def test_flujo_completo_al_dia(self, monkeypatch):
+        from src import __version__ as VERSION
+
+        latest = "v" + VERSION
+
         def fake_release(timeout=5):
             return {
-                "tag_name": "v3.0.0",
-                "name": "Multi-Language Backend Support",
-                "published_at": "2026-07-25T22:04:00Z",
-                "html_url": "https://github.com/Leoshi123/AIGatekeeper/releases/tag/v3.0.0",
+                "tag_name": latest,
+                "name": "Versioning unificado + update_check",
+                "published_at": "2026-09-01T00:00:00Z",
+                "html_url": f"https://github.com/Leoshi123/AIGatekeeper/releases/tag/{latest}",
             }
 
         monkeypatch.setattr("src.version_check.fetch_latest_release", fake_release)
@@ -72,11 +78,13 @@ class TestCheckForUpdates:
 
         assert result["outdated"] is False
         assert result["up_to_date"] is True
-        assert result["local_version"] == "3.0.0"
-        assert result["latest_version"] == "3.0.0"
+        assert result["local_version"] == VERSION
+        assert result["latest_version"] == VERSION
         assert "última versión" in result["message"]
 
     def test_flujo_completo_desactualizado(self, monkeypatch):
+        from src import __version__ as VERSION
+
         def fake_release(timeout=5):
             return {
                 "tag_name": "v4.0.0",
@@ -89,11 +97,13 @@ class TestCheckForUpdates:
         result = check_for_updates()
 
         assert result["outdated"] is True
-        assert result["local_version"] == "3.0.0"
+        assert result["local_version"] == VERSION
         assert result["latest_version"] == "4.0.0"
         assert "actualiz" in result["message"].lower()
 
     def test_sin_red_no_bloquea(self, monkeypatch):
+        from src import __version__ as VERSION
+
         def fake_release(timeout=5):
             return None
 
@@ -101,7 +111,7 @@ class TestCheckForUpdates:
         result = check_for_updates()
 
         assert result["outdated"] is None
-        assert result["local_version"] == "3.0.0"
+        assert result["local_version"] == VERSION
         assert "error" in result
 
     def test_fetch_latest_release_con_red(self, monkeypatch):
