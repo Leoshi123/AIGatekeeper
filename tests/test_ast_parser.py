@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Tests del Extractor AST
+🛡️ AG-Wrapper - Tests del Extractor AST
 
 Tests para el podador de contexto.
 """

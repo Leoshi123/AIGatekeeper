@@ -1,5 +1,5 @@
 """
-🛡️ Zero-Trust AI Context Wrapper (ZTC-Wrapper)
+🛡️ AG-Wrapper - AI Gatekeeper
 
 Middleware de seguridad para agentes de IA:
 - Sanitizador de metadatos
@@ -9,7 +9,7 @@ Middleware de seguridad para agentes de IA:
 - AI Agent Wrapper
 """
 
-__version__ = "0.1.0"
+__version__ = "2.1.0"
 __author__ = "Leoshi"
 __license__ = "MIT"
 

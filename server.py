@@ -39,6 +39,7 @@ if sys.platform == "win32":
 # Importar módulos de AG-Wrapper
 from src.sanitizer import MetadataSanitizer
 from src.detector import LegacyShield, Severity
+from src.detector.injection_detector import PromptInjectDetector
 from src.ast_parser import ASTExtractor
 
 # Configuración
@@ -602,6 +603,76 @@ async def sanitize_code(request: Request):
             <div class="bg-black/30 rounded-lg p-3">
                 <pre class="mono text-xs text-gray-300 overflow-x-auto max-h-32">{result.cleaned_code[:500]}</pre>
             </div>
+        </div>
+        """)
+
+    except Exception as e:
+        return HTMLResponse(f"""
+        <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-400">
+            <i class="fas fa-exclamation-circle"></i> Error: {str(e)}
+        </div>
+        """)
+
+
+@app.post("/api/scan-prompt")
+async def scan_prompt(request: Request):
+    """Analiza texto en busca de prompt injection."""
+    form = await request.form()
+    text = form.get("text", "")
+    source = form.get("source", "unknown")
+
+    if not text:
+        return HTMLResponse("""
+        <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 text-red-400">
+            <i class="fas fa-exclamation-circle"></i> Please enter text to analyze
+        </div>
+        """)
+
+    try:
+        detector = PromptInjectDetector()
+        result = detector.scan_text(text)
+
+        if result["status"] == "clean":
+            return HTMLResponse("""
+            <div class="bg-green-500/20 border border-green-500/50 rounded-lg p-4">
+                <i class="fas fa-check-circle text-green-400"></i>
+                <span class="text-green-400 ml-2">No prompt injection detected.</span>
+            </div>
+            """)
+
+        summary = result["summary"]
+        severity_colors = {
+            "HIGH": "bg-red-500/20 border-red-500 text-red-400",
+            "MEDIUM": "bg-yellow-500/20 border-yellow-500 text-yellow-400",
+            "LOW": "bg-blue-500/20 border-blue-500 text-blue-400",
+        }
+
+        findings_html = "".join(
+            [
+                f"""
+            <div class="border-l-4 {severity_colors.get(f['severity'], 'border-gray-500')} rounded-r-lg p-3 mb-2">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span class="text-xs font-semibold uppercase">{f['severity']}</span>
+                        <span class="text-xs text-gray-500 ml-2">{f['category']}</span>
+                        <p class="text-sm mt-1">{f['description']}</p>
+                        <p class="mono text-xs text-gray-500 mt-1">"{f['matched'][:80]}"</p>
+                    </div>
+                    <i class="fas fa-exclamation-triangle text-lg opacity-50"></i>
+                </div>
+            </div>
+            """
+                for f in result["findings"][:10]
+            ]
+        )
+
+        return HTMLResponse(f"""
+        <div class="space-y-2">
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-shield text-red-400 text-xl"></i>
+                <span class="font-semibold">{summary['total']} injection patterns detected</span>
+            </div>
+            {findings_html}
         </div>
         """)
 

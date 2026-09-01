@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Módulo AST Parser
+🛡️ AG-Wrapper - Módulo AST Parser
 """
 
 from .extractor import ASTExtractor, prune_file, ExtractedFunction, PrunedContext

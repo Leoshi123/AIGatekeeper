@@ -20,6 +20,17 @@ from src.config import AGConfig, get_project_root
 from src.detector.normalizer import CodeNormalizer
 
 
+# ── Self-scan exclusions ─────────────────────────────────────────────────────
+# Files that contain pattern definitions and will always self-match when
+# scanned by the detector. Excluded by default in scan_directory() to
+# avoid noise in self-audit / CI security scans.
+SELF_EXCLUDE_FILES: frozenset[str] = frozenset({
+    "zombie_detector.py",       # Regex pattern definitions
+    "injection_detector.py",    # Injection pattern definitions
+    "ast_detector.py",          # AST pattern definitions
+})
+
+
 class Severity(Enum):
     """Nivel de severidad del problema."""
 
@@ -595,6 +606,299 @@ class LegacyShield:
             alternative="Usar tipos específicos o unknown",
             language="typescript",
         ),
+        # ========== RUBY ==========
+        ZombiePattern(
+            pattern=r"\beval\s*\(",
+            severity=Severity.CRITICAL,
+            description="eval() en Ruby ejecuta código arbitrario",
+            alternative="Usar whitelist de métodos o evitar eval completamente",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"\bsystem\s*\(",
+            severity=Severity.CRITICAL,
+            description="system() ejecuta comandos del shell",
+            alternative="Usar Open3 o Kernel#spawn con argumentos separados",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"\bexec\s*\(",
+            severity=Severity.CRITICAL,
+            description="exec() reemplaza el proceso actual con un comando",
+            alternative="Usar Process.spawn o Open3 con argumentos seguros",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"\bsend\s*\(",
+            severity=Severity.HIGH,
+            description="send() invoca métodos dinámicamente — puede ser abusado",
+            alternative="Usar case/when o hash de métodos con whitelist",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"\b(instance_eval|class_eval|module_eval)\s*[\(\{]",
+            severity=Severity.HIGH,
+            description="eval dinámico en contexto de objeto/clase permite ejecución arbitraria",
+            alternative="Usar mixins o módulos con métodos explícitos",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"Kernel\.open\s*\(",
+            severity=Severity.HIGH,
+            description="Kernel.open con pipes (|cmd) ejecuta comandos del shell",
+            alternative="Usar File.open para archivos o URI.open para URLs",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"Marshal\.load\s*\(",
+            severity=Severity.HIGH,
+            description="Marshal.load puede ejecutar código arbitrario en deserialización",
+            alternative="Usar JSON.parse o serialización segura con whitelist",
+            language="ruby",
+        ),
+        ZombiePattern(
+            pattern=r"YAML\.load\s*\(",
+            severity=Severity.HIGH,
+            description="YAML.load sin safe_load es vulnerable a deserialización (Psych)",
+            alternative="Usar YAML.safe_load o Psych.safe_load",
+            language="ruby",
+        ),
+        # ========== KOTLIN ==========
+        ZombiePattern(
+            pattern=r"Runtime\.getRuntime\s*\(\)\.exec\s*\(",
+            severity=Severity.CRITICAL,
+            description="Runtime.exec() permite ejecución de comandos del sistema",
+            alternative="Usar ProcessBuilder con argumentos separados",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"\bProcessBuilder\s*\(",
+            severity=Severity.MEDIUM,
+            description="ProcessBuilder puede ejecutar comandos si recibe input no validado",
+            alternative="Validar y sanitizar argumentos antes de usar ProcessBuilder",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"\beval\s*\(",
+            severity=Severity.CRITICAL,
+            description="eval() en Kotlin/JS ejecuta código arbitrario",
+            alternative="Usar parsing seguro o funciones específicas",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"\bTODO\s*\(\s*\)",
+            severity=Severity.LOW,
+            description="TODO() indica código incompleto — puede causar runtime exceptions",
+            alternative="Implementar la funcionalidad o lanzar UnsupportedOperationException explícita",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"!!\s*$|!!\s*[\.\)]",
+            severity=Severity.MEDIUM,
+            description="Operador !! (not-null assertion) causa KotlinNullPointerException",
+            alternative="Usar let, require, check o safe calls (?.)",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"Class\.forName\s*\(",
+            severity=Severity.HIGH,
+            description="Class.forName carga clases dinámicamente — potencial code injection",
+            alternative="Usar referencia directa de clase o inyección de dependencias",
+            language="kotlin",
+        ),
+        ZombiePattern(
+            pattern=r"sun\.misc\.Unsafe",
+            severity=Severity.CRITICAL,
+            description="Unsafe permite operaciones de memoria no seguras",
+            alternative="Usar API estándar de Kotlin/Java sin acceso directo a memoria",
+            language="kotlin",
+        ),
+        # ========== C# ==========
+        ZombiePattern(
+            pattern=r"Process\.Start\s*\(",
+            severity=Severity.HIGH,
+            description="Process.Start ejecuta procesos del sistema",
+            alternative="Usar argumentos sanitizados y Validar nombre de archivo",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"Assembly\.Load\s*\(",
+            severity=Severity.HIGH,
+            description="Assembly.Load carga ensamblados dinámicamente — potencial code injection",
+            alternative="Usar referencias estáticas o Plugin architecture con validación",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"\.ExecuteNonQuery\s*\([^)]*\+|\.ExecuteReader\s*\([^)]*\+|\.ExecuteScalar\s*\([^)]*\+",
+            severity=Severity.CRITICAL,
+            description="SQL injection vía concatenación en SqlCommand",
+            alternative="Usar parámetros: SqlCommand con Parameters.Add",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"\beval\s*\(",
+            severity=Severity.CRITICAL,
+            description="eval() en C# (scripting) ejecuta código arbitrario",
+            alternative="Usar parsing seguro o compilación restringida",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"BinaryFormatter\s*\(",
+            severity=Severity.CRITICAL,
+            description="BinaryFormatter es vulnerable a deserialización de objetos maliciosos",
+            alternative="Usar System.Text.Json o XML serialization con Tipos conocidos",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"XmlDocument\s*\(",
+            severity=Severity.MEDIUM,
+            description="XmlDocument puede ser vulnerable a XXE (XML External Entity)",
+            alternative="Usar XmlReader con DTD processing deshabilitado",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"Response\.Write\s*\(",
+            severity=Severity.MEDIUM,
+            description="Response.Write sin encoding puede causar XSS",
+            alternative="Usar HtmlEncode o framework anti-XSS",
+            language="csharp",
+        ),
+        ZombiePattern(
+            pattern=r"Thread\.Sleep\s*\(",
+            severity=Severity.LOW,
+            description="Thread.Sleep bloquea el thread — uso frecuente indica diseño cuestionable",
+            alternative="Usar async/await, Task.Delay o patrones reactivos",
+            language="csharp",
+        ),
+        # ========== SWIFT ==========
+        ZombiePattern(
+            pattern=r"Process\s*\(\s*\)",
+            severity=Severity.HIGH,
+            description="Process() puede ejecutar comandos del sistema en Swift",
+            alternative="Usar Process con argumentos validados y sanitized",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"unsafeBitCast\s*\(",
+            severity=Severity.HIGH,
+            description="unsafeBitCast permite casteo de memoria no seguro",
+            alternative="Usar Optional binding o protocolos para casteo seguro",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"\bdlopen\s*\(",
+            severity=Severity.HIGH,
+            description="dlopen carga bibliotecas dinámicamente — potencial code injection",
+            alternative="Usar Frameworks estáticos o Swift Package Manager",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"UnsafePointer|UnsafeMutablePointer|UnsafeRawPointer",
+            severity=Severity.MEDIUM,
+            description="Punteros inseguros eliminan las garantías de memoria de Swift",
+            alternative="Usar tipos seguros de Swift (Array, Data, ContiguousArray)",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"as!\s*\w+",
+            severity=Severity.MEDIUM,
+            description="Force cast (as!) causa fatal error si el casteo falla",
+            alternative="Usar optional cast (as?) con manejo de error",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"!\s*$|!\s*[\.\)\[]",
+            severity=Severity.MEDIUM,
+            description="Force unwrap (!) causa crash si el valor es nil",
+            alternative="Usar optional binding (if let, guard let) o nil coalescing (??)",
+            language="swift",
+        ),
+        ZombiePattern(
+            pattern=r"withUnsafeBytes\s*\(",
+            severity=Severity.MEDIUM,
+            description="withUnsafeBytes accede a memoria sin garantías de tipo",
+            alternative="Usar métodos seguros de Data o ContiguousArray",
+            language="swift",
+        ),
+        # ========== SCALA ==========
+        ZombiePattern(
+            pattern=r"sys\.process\._",
+            severity=Severity.HIGH,
+            description="sys.process permite ejecutar comandos del shell",
+            alternative="Usar ProcessBuilder con argumentos validados",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r"Class\.forName\s*\(",
+            severity=Severity.HIGH,
+            description="Class.forName carga clases dinámicamente — potencial code injection",
+            alternative="Usar referencias directas de clase o DI framework",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r"Runtime\.getRuntime\s*\(\)\.exec\s*\(",
+            severity=Severity.CRITICAL,
+            description="Runtime.exec() permite ejecución de comandos del sistema",
+            alternative="Usar ProcessBuilder con argumentos separados",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r"\.asInstanceOf\s*\[",
+            severity=Severity.MEDIUM,
+            description="asInstanceOf es un casteo forzado — causa ClassCastException",
+            alternative="Usar pattern matching o Option con isinstanceOf",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r":\s*Null\b|= Null\b|<:\s*Null\b",
+            severity=Severity.MEDIUM,
+            description="Uso de tipo Null es propenso a NullPointerExceptions",
+            alternative="Usar Option[T] para representar valores ausentes",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r"\bvar\s+\w+\s*[=:]",
+            severity=Severity.LOW,
+            description="Uso de var (mutabilidad) puede causar bugs en concurrencia",
+            alternative="Usar val (inmutabilidad) cuando sea posible",
+            language="scala",
+        ),
+        ZombiePattern(
+            pattern=r"Thread\.sleep\s*\(",
+            severity=Severity.LOW,
+            description="Thread.sleep bloquea el thread — uso frecuente indica diseño cuestionable",
+            alternative="Usar Future, Akka, o patrones reactivos",
+            language="scala",
+        ),
+        # ========== PROMPT INJECTION ==========
+        ZombiePattern(
+            pattern=r"ignore\s+(all\s+)?(previous\s+)?(instructions|rules|commands|prompts)",
+            severity=Severity.MEDIUM,
+            description="Prompt injection: intento de ignorar instrucciones del sistema",
+            alternative="Sanitizar input para evitar override de instrucciones",
+            language="prompt",
+        ),
+        ZombiePattern(
+            pattern=r"forget\s+(your\s+|all\s+)?(.{0,40})?(rules|instructions|guidelines|prompts|constraints)",
+            severity=Severity.MEDIUM,
+            description="Prompt injection: intento de borrar reglas del sistema",
+            alternative="No permitir que input externo descarte instrucciones del sistema",
+            language="prompt",
+        ),
+        ZombiePattern(
+            pattern=r"\bDAN\b|do\s+anything\s+now|jail\s*broken",
+            severity=Severity.HIGH,
+            description="Prompt injection: posible jailbreak (DAN)",
+            alternative="Bloquear patrones de jailbreak conocidos en input",
+            language="prompt",
+        ),
+        ZombiePattern(
+            pattern=r"(this\s+is|here\s+are)\s+(your\s+)?(new\s+)?system\s+prompt",
+            severity=Severity.HIGH,
+            description="Prompt injection: intento de redefinir system prompt",
+            alternative="El system prompt no debe ser modificable desde input externo",
+            language="prompt",
+        ),
     ]
 
     def __init__(self, languages: Optional[List[str]] = None, project_path: str = None):
@@ -848,7 +1152,10 @@ class LegacyShield:
 
 
 def scan_directory(
-    directory: str, extensions: List[str] = None, project_path: str = None
+    directory: str,
+    extensions: List[str] = None,
+    project_path: str = None,
+    skip_files: frozenset[str] = None,
 ) -> Dict[str, List[DetectionResult]]:
     """
     Escanea todos los archivos en un directorio.
@@ -857,14 +1164,26 @@ def scan_directory(
         directory: Directorio a escanear
         extensions: Extensiones de archivo a incluir
         project_path: Ruta al proyecto para cargar configuración
+        skip_files: Nombres de archivo a excluir (default: SELF_EXCLUDE_FILES)
 
     Returns:
         Dict {file_path: [results]}
     """
     import os
 
-    extensions = extensions or [".py", ".js", ".ts", ".jsx", ".tsx"]
+    from src.languages import DEFAULT_EXTENSIONS
+    extensions = extensions or DEFAULT_EXTENSIONS
+    if skip_files is None:
+        skip_files = SELF_EXCLUDE_FILES
     results = {}
+
+    # Directorios a excluir para evitar escaneos lentos innecesarios
+    SKIP_DIRS = {
+        ".venv", "venv", ".git", "__pycache__", "node_modules",
+        ".cache", ".mypy_cache", ".pytest_cache", ".eggs",
+        "dist", "build", ".tox", ".nox", ".ruff_cache",
+        "target", ".gradle", ".idea", ".vscode",
+    }
 
     # Usar proyecto proporcionado o auto-detectar
     if project_path is None:
@@ -872,8 +1191,13 @@ def scan_directory(
 
     shield = LegacyShield(project_path=project_path)
 
-    for root, _, files in os.walk(directory):
+    for root, dirs, files in os.walk(directory):
+        # Filtrar directorios a excluir IN-PLACE (evita que os.walk entre en ellos)
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+
         for file in files:
+            if file in skip_files:
+                continue
             if any(file.endswith(ext) for ext in extensions):
                 file_path = os.path.join(root, file)
                 file_results = shield.scan_file(file_path)

@@ -66,7 +66,7 @@ def safe_echo(text: str):
 
 
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version="2.1.0")
 def cli():
     """AG-Wrapper - Security & Context Optimization for AI Agents"""
     pass
@@ -153,10 +153,53 @@ def prune():
 @click.option("--output", "-o", type=click.Path(), help="Archivo de salida")
 def extract(file_path: str, task: str, functions: tuple, output: str):
     """Extrae contexto mínimo relevante para la tarea."""
+    import os
+    import os.path as osp
 
     extractor = ASTExtractor()
     func_list = list(functions) if functions else None
 
+    if os.path.isdir(file_path):
+        click.echo(f"📁 Extrayendo contexto del directorio: {file_path}/\n")
+        all_files = []
+        for root, dirs, files in os.walk(file_path):
+            for f in files:
+                if f.endswith(".py"):
+                    all_files.append(osp.join(root, f))
+        if not all_files:
+            click.echo("  ⚠️  No se encontraron archivos .py")
+            return
+
+        out_dir = output
+        if out_dir and not os.path.exists(out_dir):
+            os.makedirs(out_dir, exist_ok=True)
+
+        processed = 0
+        errors = 0
+        for fpath in all_files:
+            try:
+                pruned = extractor.prune(fpath, task, func_list)
+                s = extractor.get_stats(pruned)
+                rel = osp.relpath(fpath)
+                click.echo(f"  ✓ {rel} → {s['reduction_percent']}% ({s['original_lines']}→{s['pruned_lines']} líneas)")
+
+                if out_dir:
+                    rel_out = osp.splitext(rel)[0] + "_pruned.py"
+                    out_path = osp.join(out_dir, rel_out)
+                    os.makedirs(osp.dirname(out_path), exist_ok=True)
+                    out_code = _build_pruned_output(pruned)
+                    with open(out_path, "w", encoding="utf-8") as f:
+                        f.write(out_code)
+                    click.echo(f"     💾 Guardado en: {out_path}")
+                processed += 1
+            except Exception as e:
+                errors += 1
+                click.echo(f"  ✗ {osp.relpath(fpath)} → error: {e}")
+
+        click.echo(f"\n📊 Resumen: {processed} archivos procesados" + (f", {errors} errores" if errors else ""))
+        return
+
+    # Mode: single file
     pruned = extractor.prune(file_path, task, func_list)
     stats = extractor.get_stats(pruned)
 
@@ -195,17 +238,66 @@ def extract(file_path: str, task: str, functions: tuple, output: str):
 @click.argument("file_path", type=click.Path(exists=True))
 def stats(file_path: str):
     """Muestra estadísticas de reducción potencial."""
+    import os
+    import os.path as osp
 
-    extractor = ASTExtractor()
-    pruned = extractor.prune(file_path, "analyze")
-    stats = extractor.get_stats(pruned)
+    if os.path.isdir(file_path):
+        # Mode: directory -> aggregate stats for all Python files
+        click.echo(f"📁 Escaneando directorio: {file_path}/\n")
+        all_files = []
+        for root, dirs, files in os.walk(file_path):
+            for f in files:
+                if f.endswith(".py"):
+                    all_files.append(osp.join(root, f))
 
-    click.echo(f"📈 Estadísticas para: {file_path}")
-    click.echo(f"\n  Líneas originales:  {stats['original_lines']}")
-    click.echo(f"  Líneas podadas:     {stats['pruned_lines']}")
-    click.echo(f"  Reducción:          {stats['reduction_percent']}%")
-    click.echo(f"  Funciones válidas:  {stats['functions_kept']}")
-    click.echo(f"  Funciones omitidas: {stats['functions_omitted']}")
+        if not all_files:
+            click.echo("  ⚠️  No se encontraron archivos .py")
+            return
+
+        extractor = ASTExtractor()
+        total_orig = 0
+        total_pruned = 0
+        total_kept = 0
+        total_omitted = 0
+        processed = 0
+        errors = 0
+
+        for fpath in all_files:
+            try:
+                pruned = extractor.prune(fpath, "analyze")
+                s = extractor.get_stats(pruned)
+                total_orig += s["original_lines"]
+                total_pruned += s["pruned_lines"]
+                total_kept += s["functions_kept"]
+                total_omitted += s["functions_omitted"]
+                processed += 1
+                click.echo(f"  {'✓' if s['reduction_percent'] > 0 else ' '} {osp.relpath(fpath)} → {s['reduction_percent']}%")
+            except Exception as e:
+                errors += 1
+                click.echo(f"  ✗ {osp.relpath(fpath)} → error: {e}")
+
+        pct = round((1 - total_pruned / total_orig) * 100, 1) if total_orig > 0 else 0
+        click.echo("\n📊 Resumen agregado:")
+        click.echo(f"  Archivos procesados: {processed}")
+        click.echo(f"  Líneas originales:   {total_orig}")
+        click.echo(f"  Líneas podadas:      {total_pruned}")
+        click.echo(f"  Reducción total:     {pct}%")
+        click.echo(f"  Funciones válidas:   {total_kept}")
+        click.echo(f"  Funciones omitidas:  {total_omitted}")
+        if errors:
+            click.echo(f"  ⚠️  Errores:          {errors}")
+    else:
+        # Mode: single file (original behavior)
+        extractor = ASTExtractor()
+        pruned = extractor.prune(file_path, "analyze")
+        s = extractor.get_stats(pruned)
+
+        click.echo(f"📈 Estadísticas para: {file_path}")
+        click.echo(f"\n  Líneas originales:  {s['original_lines']}")
+        click.echo(f"  Líneas podadas:     {s['pruned_lines']}")
+        click.echo(f"  Reducción:          {s['reduction_percent']}%")
+        click.echo(f"  Funciones válidas:  {s['functions_kept']}")
+        click.echo(f"  Funciones omitidas: {s['functions_omitted']}")
 
 
 def _build_pruned_output(pruned) -> str:
@@ -285,7 +377,7 @@ def scan(file_path: str, block: bool):
 def scan_dir(directory: str, extensions: tuple):
     """Escanea todos los archivos en un directorio."""
 
-    exts = list(extensions) if extensions else [".py", ".js", ".ts", ".jsx", ".tsx"]
+    exts = list(extensions) if extensions else None
 
     # Detectar proyecto raíz desde el directorio
     project_path = get_project_root_from_file(directory)
@@ -604,6 +696,233 @@ def unsafe():
     click.echo(f"Problemas encontrados: {len(results)}")
     for r in results:
         click.echo(f"  [{r.pattern.severity.value}] {r.pattern.description}")
+
+
+# ============================================================================
+# COMANDOS DE CONFIGURACION (ag.yaml)
+# ============================================================================
+
+
+@cli.group()
+def config():
+    """Comandos de configuracion (ag.yaml)"""
+    pass
+
+
+@config.command(name="show")
+@click.option("--path", "-p", type=click.Path(), help="Ruta a ag.yaml especifica")
+def config_show(path: str):
+    """Muestra la configuracion activa (YAML + defaults)."""
+    from src.config.yaml_config import YamlConfig
+
+    try:
+        cfg = YamlConfig.load(path) if path else YamlConfig.find_and_load()
+    except FileNotFoundError:
+        click.echo("⚠️  No se encontro ag.yaml. Usando valores por defecto.")
+        cfg = YamlConfig()
+
+    import yaml
+    click.echo(yaml.safe_dump(cfg.to_dict(), default_flow_style=False, sort_keys=False))
+    if cfg.source_path:
+        click.echo(f"\n📄 Fuente: {cfg.source_path}")
+    else:
+        click.echo("\n📄 Fuente: valores por defecto (no hay ag.yaml)")
+
+
+@config.command(name="init")
+@click.option("--force", "-f", is_flag=True, help="Sobreescribir existente")
+def config_init(force: bool):
+    """Crea un ag.yaml con valores por defecto en el directorio actual."""
+    dest = Path.cwd() / "ag.yaml"
+    if dest.exists() and not force:
+        click.echo("⚠️  ag.yaml ya existe. Usa --force para sobreescribir.")
+        return
+
+    example = """# AG-Wrapper Configuration
+# Crea este archivo en la raiz de tu proyecto para personalizar el wrapper.
+# Los valores por defecto se usan si no existe ag.yaml.
+version: "1.0"
+
+wrapper:
+  sanitize_input: true
+  sanitize_output: true
+  prune_context: false
+  block_critical: true
+  # agent_command: "claude"
+
+detector:
+  severity_threshold: "high"  # low | medium | high | critical
+  # custom_patterns:
+  #   - pattern: "my_secret_\\\\w+"
+  #     severity: "critical"
+  #     description: "Custom secret pattern"
+  #     language: "python"
+
+sanitizer:
+  remove_comments: true
+  remove_paths: true
+  preserve_shebang: true
+  preserve_copyright: false
+
+watch:
+  extensions:
+    - .py
+    - .js
+    - .ts
+    - .jsx
+    - .tsx
+    - .go
+    - .rs
+  exclude_dirs:
+    - .git
+    - node_modules
+    - __pycache__
+    - .venv
+    - venv
+    - build
+    - dist
+  block_on_scan: false
+  quiet: false
+"""
+    dest.write_text(example, encoding="utf-8")
+    click.echo(f"✅ ag.yaml creado en: {dest}")
+
+
+# ============================================================================
+# COMANDO FILE WATCHER (ag watch)
+# ============================================================================
+
+
+@cli.command()
+@click.argument("path", default=".", type=click.Path())
+@click.option("--quiet", "-q", is_flag=True, help="Solo mostrar problemas")
+@click.option("--config", "-c", "config_path", type=click.Path(), help="Ruta a ag.yaml")
+def watch(path: str, quiet: bool, config_path: str):
+    """Vigila un directorio y escanea cambios en tiempo real.
+
+    Requiere watchdog (pip install watchdog). Usa Ctrl+C para detener.
+    """
+    from src.watcher import start_watch
+    from src.config.yaml_config import YamlConfig
+
+    cfg = None
+    if config_path:
+        cfg = YamlConfig.load(config_path)
+    elif quiet:
+        cfg = YamlConfig.find_and_load()
+        cfg.watch.quiet = True
+
+    start_watch(path, config=cfg, quiet=quiet)
+
+
+# ============================================================================
+# COMANDO WRAP (ag wrap)
+# ============================================================================
+
+
+@cli.command()
+@click.argument("prompt", required=False)
+@click.option("--agent", "-a", default="claude", help="Agente (claude, opencode, demo)")
+@click.option("--config", "-c", "config_path", type=click.Path(), help="Ruta a ag.yaml")
+@click.option("--no-sanitize", is_flag=True, help="Desactivar sanitizacion")
+@click.option("--no-block", is_flag=True, help="No bloquear en problemas criticos")
+@click.option("--stdin", "from_stdin", is_flag=True, help="Leer prompt desde stdin")
+def wrap(prompt: str, agent: str, config_path: str,
+         no_sanitize: bool, no_block: bool, from_stdin: bool):
+    """
+    Ejecuta un agente IA con el pipeline completo de seguridad.
+
+    Sanitiza el prompt, lo envia al agente, sanitiza la respuesta,
+    y escanea el output en busca de codigo vulnerable.
+
+    Ejemplos:
+
+        ag wrap "Hazme una funcion de login"
+
+        ag wrap --agent opencode "Refactoriza este modulo"
+
+        cat prompt.txt | ag wrap --stdin
+
+        ag wrap --config ag.yaml "Genera una API REST"
+    """
+    from src.wrapper import AIAgentWrapper, WrapperConfig
+
+    # Recolectar prompt
+    if from_stdin:
+        import sys as _sys
+        prompt_text = _sys.stdin.read()
+    elif prompt:
+        prompt_text = prompt
+    else:
+        click.echo("⚠️  Proporciona un prompt o usa --stdin")
+        click.echo("   Ejemplo: ag wrap \"tu prompt aqui\"")
+        click.echo("   Ejemplo: cat archivo.txt | ag wrap --stdin")
+        raise SystemExit(1)
+
+    # Cargar config desde YAML si se especifico
+    if config_path:
+        from src.config.yaml_config import YamlConfig
+        yaml_cfg = YamlConfig.load(config_path)
+        cfg = WrapperConfig(**yaml_cfg.build_wrapper_config())
+    else:
+        cfg = WrapperConfig.from_yaml()
+
+    # CLI flags sobreescriben YAML y defaults
+    cfg.agent_command = agent
+    if no_sanitize:
+        cfg.sanitize_input = False
+        cfg.sanitize_output = False
+    if no_block:
+        cfg.block_critical = False
+
+    # Verificar agente
+    wrapper = AIAgentWrapper()
+    if agent != "demo":
+        available = wrapper.check_agent_available(agent)
+        if not available:
+            click.echo(f"⚠️  '{agent}' no disponible. Usando modo demo.", err=True)
+            cfg.agent_command = "demo"
+
+    # Ejecutar
+    click.echo(f"🚀 AG-Wrap ejecutando '{cfg.agent_command}'...")
+    click.echo("   (sanitize={}, block={}, agent={})".format(
+        cfg.sanitize_input, cfg.block_critical, cfg.agent_command))
+
+    result = wrapper.run(prompt_text, cfg)
+
+    # Output
+    click.echo("")
+
+    if result.blocked:
+        click.echo("🛑 OUTPUT BLOQUEADO — problemas criticos detectados:")
+        click.echo(result.stdout)
+    else:
+        click.echo("📤 Output:")
+        click.echo(result.stdout)
+
+    if result.stderr:
+        click.echo(f"⚠️  Stderr:\n{result.stderr}", err=True)
+
+    # Resumen
+    click.echo("")
+    click.echo("📊 Resumen:")
+    click.echo(f"   Input sanitizado:   {'✅' if result.sanitized_input else '❌'}")
+    click.echo(f"   Output sanitizado:  {'✅' if result.sanitized_output else '❌'}")
+    click.echo(f"   Contexto podado:    {'✅' if result.pruned_context else '❌'}")
+    click.echo(f"   Problemas seg.:     {result.security_issues_found}")
+    click.echo(f"   Bloqueado:          {'✅' if result.blocked else '❌'}")
+    click.echo(f"   Return code:        {result.returncode}")
+
+
+# ============================================================================
+# Extensiones: comandos nuevos (init, prompt, scan-prompt, push)
+# ============================================================================
+
+try:
+    from src.cli_extensions import register_commands
+    register_commands(cli)
+except ImportError:
+    pass  # Modo sin extensiones - compatibilidad hacia atras
 
 
 if __name__ == "__main__":

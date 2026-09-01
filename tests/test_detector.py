@@ -1,5 +1,5 @@
 """
-🛡️ ZTC-Wrapper - Tests para el Detector Zombi
+🛡️ AG-Wrapper - Tests para el Detector Zombi
 
 Tests para el detector de código vulnerable.
 """
@@ -579,6 +579,242 @@ document.write(x)  # JavaScript
 
         assert "python" in summary["by_language"]
         assert "javascript" in summary["by_language"]
+
+    # ========== RUBY TESTS ==========
+    def test_detect_ruby_eval(self):
+        """Debe detectar eval() en Ruby."""
+        code = 'result = eval(user_input)'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("eval" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_system(self):
+        """Debe detectar system() en Ruby."""
+        code = 'system("rm -rf /")'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("system" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_exec(self):
+        """Debe detectar exec() en Ruby."""
+        code = 'exec("ls -la")'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("exec" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_marshal_load(self):
+        """Debe detectar Marshal.load() en Ruby."""
+        code = 'data = Marshal.load(params[:data])'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("marshal" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_yaml_load(self):
+        """Debe detectar YAML.load() en Ruby."""
+        code = 'config = YAML.load(user_yaml)'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("yaml" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_kernel_open(self):
+        """Debe detectar Kernel.open() en Ruby."""
+        code = 'io = Kernel.open(params[:url])'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("kernel" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_send(self):
+        """Debe detectar send() en Ruby."""
+        code = 'obj.send(params[:method])'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("send" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_ruby_instance_eval(self):
+        """Debe detectar instance_eval() en Ruby."""
+        code = 'obj.instance_eval { dangerous_method }'
+        detector = LegacyShield(languages=["ruby"])
+        results = detector.scan_code(code)
+        assert any("instance_eval" in r.pattern.pattern.lower() for r in results)
+
+    # ========== KOTLIN TESTS ==========
+    def test_detect_kotlin_runtime_exec(self):
+        """Debe detectar Runtime.exec() en Kotlin."""
+        code = 'Runtime.getRuntime().exec(command)'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("runtime" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_kotlin_eval(self):
+        """Debe detectar eval() en Kotlin/JS."""
+        code = 'val result = eval(code)'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("eval" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_kotlin_class_forname(self):
+        """Debe detectar Class.forName() en Kotlin."""
+        code = 'val clazz = Class.forName(className)'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("class.forname" in r.pattern.description.lower() for r in results)
+
+    def test_detect_kotlin_unsafe(self):
+        """Debe detectar sun.misc.Unsafe en Kotlin."""
+        code = 'val unsafe = sun.misc.Unsafe.getUnsafe()'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("unsafe" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_kotlin_todo(self):
+        """Debe detectar TODO() en Kotlin."""
+        code = 'fun process() = TODO()'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("todo" in r.pattern.description.lower() for r in results)
+
+    def test_detect_kotlin_process_builder(self):
+        """Debe detectar ProcessBuilder en Kotlin."""
+        code = 'val pb = ProcessBuilder(command)'
+        detector = LegacyShield(languages=["kotlin"])
+        results = detector.scan_code(code)
+        assert any("processbuilder" in r.pattern.pattern.lower() for r in results)
+
+    # ========== C# TESTS ==========
+    def test_detect_csharp_process_start(self):
+        """Debe detectar Process.Start() en C#."""
+        code = 'Process.Start("cmd.exe", args)'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("process.start" in r.pattern.description.lower() for r in results)
+
+    def test_detect_csharp_assembly_load(self):
+        """Debe detectar Assembly.Load() en C#."""
+        code = 'var asm = Assembly.Load(byteArray)'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("assembly.load" in r.pattern.description.lower() for r in results)
+
+    def test_detect_csharp_binary_formatter(self):
+        """Debe detectar BinaryFormatter en C#."""
+        code = 'var formatter = new BinaryFormatter()'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("binaryformatter" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_csharp_eval(self):
+        """Debe detectar eval() en C#."""
+        code = 'var result = eval(code)'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("eval" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_csharp_xml_document(self):
+        """Debe detectar XmlDocument en C#."""
+        code = 'var doc = new XmlDocument()'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("xmldocument" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_csharp_response_write(self):
+        """Debe detectar Response.Write() en C#."""
+        code = 'Response.Write(userInput)'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("response.write" in r.pattern.description.lower() for r in results)
+
+    def test_detect_csharp_thread_sleep(self):
+        """Debe detectar Thread.Sleep() en C#."""
+        code = 'Thread.Sleep(1000)'
+        detector = LegacyShield(languages=["csharp"])
+        results = detector.scan_code(code)
+        assert any("thread.sleep" in r.pattern.description.lower() for r in results)
+
+    # ========== SWIFT TESTS ==========
+    def test_detect_swift_process(self):
+        """Debe detectar Process() en Swift."""
+        code = 'let task = Process()'
+        detector = LegacyShield(languages=["swift"])
+        results = detector.scan_code(code)
+        assert any("process" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_swift_unsafe_bitcast(self):
+        """Debe detectar unsafeBitCast() en Swift."""
+        code = 'let ptr = unsafeBitCast(ptr, to: UnsafeMutableRawPointer.self)'
+        detector = LegacyShield(languages=["swift"])
+        results = detector.scan_code(code)
+        assert any("unsafebitcast" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_swift_dlopen(self):
+        """Debe detectar dlopen() en Swift."""
+        code = 'let handle = dlopen(path, RTLD_NOW)'
+        detector = LegacyShield(languages=["swift"])
+        results = detector.scan_code(code)
+        assert any("dlopen" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_swift_force_cast(self):
+        """Debe detectar force cast (as!) en Swift."""
+        code = 'let obj = string as! MyType'
+        detector = LegacyShield(languages=["swift"])
+        results = detector.scan_code(code)
+        assert any("as!" in r.pattern.pattern for r in results)
+
+    def test_detect_swift_unsafe_pointer(self):
+        """Debe detectar UnsafePointer en Swift."""
+        code = 'let ptr: UnsafePointer<Int> = ...'
+        detector = LegacyShield(languages=["swift"])
+        results = detector.scan_code(code)
+        assert any("unsafepointer" in r.pattern.pattern.lower() for r in results)
+
+    # ========== SCALA TESTS ==========
+    def test_detect_scala_sys_process(self):
+        """Debe detectar sys.process._ en Scala."""
+        code = 'import sys.process._'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("sys.process" in r.pattern.description.lower() for r in results)
+
+    def test_detect_scala_class_forname(self):
+        """Debe detectar Class.forName() en Scala."""
+        code = 'val clazz = Class.forName(name)'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("class.forname" in r.pattern.description.lower() for r in results)
+
+    def test_detect_scala_runtime_exec(self):
+        """Debe detectar Runtime.exec() en Scala."""
+        code = 'Runtime.getRuntime().exec(cmd)'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("runtime" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_scala_asinstanceof(self):
+        """Debe detectar asInstanceOf en Scala."""
+        code = 'val obj = str.asInstanceOf[MyType]'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("asinstanceof" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_scala_null_type(self):
+        """Debe detectar uso de tipo Null en Scala."""
+        code = 'def process(x: String): Null = null'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("null" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_scala_var(self):
+        """Debe detectar uso de var en Scala."""
+        code = 'var counter = 0'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("var" in r.pattern.pattern.lower() for r in results)
+
+    def test_detect_scala_thread_sleep(self):
+        """Debe detectar Thread.sleep() en Scala."""
+        code = 'Thread.sleep(1000)'
+        detector = LegacyShield(languages=["scala"])
+        results = detector.scan_code(code)
+        assert any("thread.sleep" in r.pattern.description.lower() for r in results)
 
 
 class TestSeverityEnum:

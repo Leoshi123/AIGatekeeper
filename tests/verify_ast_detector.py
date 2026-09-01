@@ -36,7 +36,7 @@ from src.detector.zombie_detector import LegacyShield
 
 shield = LegacyShield()
 
-print("=== ZTC v1.0.2 Verification Suite ===\n")
+print("=== AG-Wrapper Verification Suite ===\n")
 
 for filename, code, goal in test_cases:
     print(f"Testing {filename} -> {goal}")

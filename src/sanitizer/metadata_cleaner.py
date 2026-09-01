@@ -1,6 +1,6 @@
 
 """
-🛡️ ZTC-Wrapper - Sanitizador de Metadatos (Ghost-Cleaner)
+🛡️ AG-Wrapper - Sanitizador de Metadatos (Ghost-Cleaner)
 
 Este módulo limpia el código generado por agentes de IA:
 - Rutas absolutas → relativas

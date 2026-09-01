@@ -18,15 +18,10 @@ pip install tree-sitter-python tree-sitter-javascript tree-sitter-typescript
 ```
 
 ### 2. Wrapper para Agentes de IA
-- **Descripción**: Crear un CLI que envuelva llamadas a Claude Code/OpenCode y aplique sanitización automática
-- **Estado**: Pendiente
+- **Descripción**: CLI que envuelve llamadas a agentes IA con sanitización automática
+- **Estado**: ✅ Completado en v2.1.0
 - **Dificultad**: Media
-- **Beneficio**: Uso seamless - todo pasa por los filtros automáticamente
-
-```bash
-# Uso propuesto
-ag run "claude code" --sanitize --prune
-```
+- **Comando**: `ag wrap "prompt" --agent claude`
 
 ### 3. Dashboard Web (UI)
 - **Descripción**: Interfaz visual para ver estadísticas de seguridad, tokens ahorrados, etc.
@@ -38,21 +33,11 @@ ag run "claude code" --sanitize --prune
 
 ## 🔧 Mejoras Técnicas (Media Prioridad)
 
-### 4. Soporte para más lenguajes
-- **Descripción**: Agregar patrones de detección para Go, Rust, Java, C++
-- **Estado**: Pendiente
-- **Archivos a modificar**: `src/detector/zombie_detector.py`
-
-```python
-# Ejemplo para Go
-ZombiePattern(
-    pattern=r'exec\.Command\s*\(',
-    severity=Severity.CRITICAL,
-    description="Command injection risk",
-    alternative="Use flag package for user input",
-    language="go"
-)
-```
+### 4. Soporte para más lenguajes backend (v3.0.0)
+- **Descripción**: Agregar patrones de detección para Ruby, Kotlin, C#, Swift, Scala y otros lenguajes backend
+- **Estado**: 📅 Planificado para v3.0.0
+- **Archivos a modificar**: `src/detector/zombie_detector.py`, `core/src/scanner.cpp`
+- **Dificultad**: Media
 
 ### 5. Análisis de Dependencias Peligrosas
 - **Descripción**: Detectar paquetes npm/pip vulnerables o maliciosos
@@ -68,25 +53,9 @@ ZombiePattern(
 
 ### 6. Configuración Personalizable
 - **Descripción**: Archivo de configuración `ag.yaml` para personalizar reglas
-- **Estado**: Pendiente
+- **Estado**: ✅ Completado en v2.1.0
 - **Dificultad**: Baja
-- **Beneficio**: Adaptar a diferentes proyectos/equipos
-
-```yaml
-# ag.yaml ejemplo
-sanitizer:
-  remove_comments: true
-  remove_paths: true
-  
-detector:
-  blocked_functions:
-    - eval
-    - exec
-    - shell=True
-    
-prune:
-  max_context_lines: 500
-```
+- **Comando**: `ag config init` crea `ag.yaml` en el proyecto
 
 ---
 
@@ -160,12 +129,17 @@ run.bat shield scan ./src --report=security-report.html
 
 ## 📋 Checklist de Implementación
 
+### ✅ Completado
+- [x] **Wrapper CLI** (`ag wrap`) — v2.1.0
+- [x] **Archivo de configuración** (`ag.yaml`) — v2.1.0
+- [x] **File Watcher** (`ag watch`) — v2.1.0
+
+### 📅 Pendiente
+- [ ] **Soporte más lenguajes backend** (Ruby, Kotlin, C#, Swift, Scala) — v3.0.0
+- [ ] **Engine de ML** para detección avanzada — v3.1.0
 - [ ] Tree-Sitter integration
-- [ ] Wrapper CLI
 - [ ] Dashboard web
-- [ ] Soporte Go/Rust/Java
 - [ ] Análisis de dependencias
-- [ ] Archivo de configuración
 - [ ] Reportes HTML
 - [ ] Modo strict
 - [ ] VS Code Extension

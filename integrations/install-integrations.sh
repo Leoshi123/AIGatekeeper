@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Get ZTC path
+# Get AG path
 get_ag_python() {
     local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local ag_root="$(cd "$script_dir/.." && pwd)"
@@ -79,7 +79,7 @@ install_vscode() {
     fi
     
     echo -e "${GREEN}[OK]${NC} VSCode integration installed"
-    echo -e "${BLUE}[INFO]${NC} Press Ctrl+Shift+P and run 'Tasks: Run Task' to use ZTC tasks"
+    echo -e "${BLUE}[INFO]${NC} Press Ctrl+Shift+P and run 'Tasks: Run Task' to use AG tasks"
 }
 
 install_cursor() {

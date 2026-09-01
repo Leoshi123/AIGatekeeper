@@ -54,3 +54,8 @@ htmlcov/
 # --- Local agent config (no versionable) ---
 .claude/
 ag_history.db
+.atl/
+
+# --- AIGatekeeper local ---
+# Note: .aigatekeeper/ has its own internal .gitignore
+#       config.json can be committed if team-sharing is desired

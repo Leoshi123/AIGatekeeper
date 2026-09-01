@@ -1,0 +1,94 @@
+[project]
+name = "aigatekeeper"
+version = "2.1.0"
+description = "🛡️ AG-Wrapper - Security & Context Optimization for AI Agents"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Leoshi" }
+]
+license = { text = "MIT" }
+keywords = [
+  "security",
+  "ai-agent",
+  "code-scanner",
+  "prompt-injection",
+  "zombie-code",
+  "mcp",
+  "ast",
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Security",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+  "click>=8.1.0",
+  "rich>=13.0.0",
+  "regex>=2023.0.0",
+  "pyyaml>=6.0",
+  "tree-sitter>=0.20.0",
+  "tree-sitter-python>=0.20.0",
+  "bandit>=1.7.0",
+  "safety>=3.0.0",
+  "fastapi>=0.109.0",
+  "uvicorn[standard]>=0.27.0",
+  "jinja2>=3.1.0",
+  "mcp[cli]>=1.0.0",
+  "python-dotenv",
+  "pytest>=9.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-cov>=4.1.0",
+  "flake8>=7.0.0",
+  "black>=24.0.0",
+  "mypy>=1.8.0",
+  "types-regex>=2023.0.0",
+  "types-pyyaml>=6.0",
+]
+
+[project.scripts]
+aigatekeeper = "src.cli:cli"
+ag = "src.cli:cli"
+
+[build-system]
+requires = ["scikit-build-core>=0.10.0", "pybind11>=2.12.0"]
+build-backend = "scikit_build_core.build"
+
+[tool.scikit-build]
+# Build C++ module (pyagcore) via CMake + pybind11
+cmake.targets = ["pyagcore"]
+cmake.source-dir = "core"
+# Incluir paquete Python src/ en el wheel
+wheel.packages = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312", "py313", "py314"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+markers = [
+  "slow: Tests that are slow to run",
+  "integration: Integration tests",
+  "unit: Unit tests",
+]
