@@ -161,7 +161,7 @@ class TestCPlusPlusConsistency:
         from pathlib import Path
 
         scanner_h = Path(__file__).parent.parent / "core" / "include" / "scanner.h"
-        content = scanner_h.read_text()
+        content = scanner_h.read_text(encoding="utf-8")
 
         # Extract the default extensions from scan_directory declaration
         match = re.search(
@@ -189,7 +189,7 @@ class TestCPlusPlusConsistency:
         from pathlib import Path
 
         pyag_cpp = Path(__file__).parent.parent / "core" / "bindings" / "pyag.cpp"
-        content = pyag_cpp.read_text()
+        content = pyag_cpp.read_text(encoding="utf-8")
 
         match = re.search(
             r'scan_directory.*?extensions.*?=\s*std::vector<std::string>\{([^}]+)\}',
