@@ -27,6 +27,7 @@ if sys.platform == "win32":
     except Exception:
         pass  # Si falla, continuar de todas formas
 
+from src import __version__ as AG_VERSION
 from src.sanitizer import MetadataSanitizer
 from src.ast_parser import ASTExtractor
 from src.detector import LegacyShield, Severity
@@ -66,7 +67,7 @@ def safe_echo(text: str):
 
 
 @click.group()
-@click.version_option(version="2.1.0")
+@click.version_option(version=AG_VERSION)
 def cli():
     """AG-Wrapper - Security & Context Optimization for AI Agents"""
     pass

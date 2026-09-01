@@ -19,3 +19,6 @@ node_modules/
 
 # ASTDetector definitions ( falsos positivos en la definición de patrones)
 src/detector/ast_detector.py
+
+# MCP plugin tool docstrings list pattern names (eval/exec) as documentation
+src/mcp_plugin/core.py

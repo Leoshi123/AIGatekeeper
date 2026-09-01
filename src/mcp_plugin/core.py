@@ -20,9 +20,11 @@ from mcp.server.fastmcp import FastMCP, Context
 # Ensure project root is in path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
+from src import __version__
 from src.sanitizer import MetadataSanitizer
 from src.ast_parser import ASTExtractor
 from src.detector import LegacyShield, scan_directory as scan_dir_fn
+from src.version_check import check_for_updates
 
 
 logger = logging.getLogger(__name__)
@@ -120,6 +122,7 @@ class AGWrapperPlugin:
         self._register_tool(mcp, "scan_directory", self._scan_directory_impl, 120)
         self._register_tool(mcp, "prune_context", self._prune_context_impl, 30)
         self._register_tool(mcp, "clean_code", self._clean_code_impl, 10)
+        self._register_tool(mcp, "update_check", self._update_check_impl, 15)
 
         self._register_resources(mcp)
         self._register_prompts(mcp)
@@ -144,7 +147,7 @@ class AGWrapperPlugin:
         @mcp.resource(f"{resource_prefix}://version")
         def get_version() -> str:
             """Returns the AG-Wrapper version."""
-            return "AG-Wrapper v1.0.4 — Zero-Trust AI Agent Security (Plugin)"
+            return f"AG-Wrapper v{__version__} — Zero-Trust AI Agent Security (Plugin)"
 
         @mcp.resource(f"{resource_prefix}://languages")
         def get_supported_languages() -> str:
@@ -442,6 +445,15 @@ class AGWrapperPlugin:
         sanitizer = MetadataSanitizer()
         result = sanitizer.sanitize(code)
         return result.cleaned_code
+
+    def _update_check_impl(self) -> str:
+        """Check if the installed AG-Wrapper version is outdated vs latest GitHub release.
+
+        Reads LOCAL version first (src.__version__), then queries GitHub Releases.
+        Never blocks: if the network fails, returns local version as reference.
+        """
+        result = check_for_updates()
+        return json.dumps(result, ensure_ascii=False, indent=2)
 
 
 # =============================================================================

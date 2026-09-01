@@ -28,10 +28,12 @@ from mcp.server.fastmcp import FastMCP, Context
 # Ensure project root is in path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src import __version__
 from src.sanitizer import MetadataSanitizer
 from src.ast_parser import ASTExtractor
 from src.detector import LegacyShield, scan_directory as scan_dir_fn
 from src.detector.injection_detector import PromptInjectDetector
+from src.version_check import check_for_updates
 
 
 # =============================================================================
@@ -380,6 +382,22 @@ def scan_prompt(
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
+@mcp.tool()
+@mcp_error_boundary
+@timeout_handler(15)
+def update_check() -> str:
+    """Check if the installed AIGatekeeper version is outdated compared to the latest GitHub release.
+
+    Reads the LOCAL version first, then queries GitHub Releases. Returns JSON with
+    local_version, latest_version, outdated flag, and update instructions.
+
+    Use this to recommend updates when a user is running an old AIGatekeeper
+    (e.g. "Estás usando AIGatekeeper v1.0.2, la última es v3.0.0 — actualizá").
+    """
+    result = check_for_updates()
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
 # =============================================================================
 # RESOURCES
 # =============================================================================
@@ -388,7 +406,7 @@ def scan_prompt(
 @mcp.resource("ag://version")
 def get_version() -> str:
     """Returns the AG-Wrapper version."""
-    return "AG-Wrapper v2.1.0 — AI Gatekeeper Security"
+    return f"AG-Wrapper v{__version__} — AI Gatekeeper Security"
 
 
 @mcp.resource("ag://languages")
