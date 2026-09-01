@@ -50,3 +50,7 @@ tmp/
 .coverage
 htmlcov/
 .tox/
+
+# --- Local agent config (no versionable) ---
+.claude/
+ag_history.db
