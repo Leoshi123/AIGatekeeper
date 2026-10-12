@@ -66,11 +66,26 @@ session_id = "abc-123"
         assert len(issues) > 0
         assert detector.block_critical(issues) is True
 
-    def test_check_agent_available(self):
-        """Debe verificar disponibilidad de agentes."""
+    def test_check_agent_available(self, monkeypatch):
+        """Debe verificar disponibilidad de agentes sin depender del entorno."""
         wrapper = AIAgentWrapper()
 
-        # Claude y opencode no deberían estar disponibles en el test
+        # Agente instalado → disponible
+        monkeypatch.setattr(
+            "subprocess.run",
+            lambda *args, **kwargs: None,
+        )
+        assert wrapper.check_agent_available("claude") is True
+        assert wrapper.check_agent_available("opencode") is True
+
+        # Agente no instalado → no disponible
+        def _raise_file_not_found(*args, **kwargs):
+            raise FileNotFoundError
+
+        monkeypatch.setattr(
+            "subprocess.run",
+            _raise_file_not_found,
+        )
         assert wrapper.check_agent_available("claude") is False
         assert wrapper.check_agent_available("opencode") is False
 
